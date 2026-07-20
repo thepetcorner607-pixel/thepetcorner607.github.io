@@ -1,1 +1,290 @@
+<!DOCTYPE html>
 
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Service Details | The Pet Corner</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=Poppins:wght@700;800&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;family=Poppins:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 48;
+        }
+        
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .glow-pulse {
+            animation: glow 3s infinite ease-in-out;
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 5px rgba(255, 193, 7, 0.1); }
+            50% { box-shadow: 0 0 20px rgba(255, 193, 7, 0.3); }
+        }
+
+        .floating {
+            animation: floating 6s infinite ease-in-out;
+        }
+
+        @keyframes floating {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .star-field {
+            background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.05) 1px, transparent 0);
+            background-size: 40px 40px;
+        }
+
+        .watermark-text {
+            font-size: 12rem;
+            line-height: 1;
+            font-weight: 900;
+            color: rgba(255, 255, 255, 0.02);
+            pointer-events: none;
+            user-select: none;
+            z-index: 0;
+            white-space: nowrap;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "glass-bg": "rgba(255, 255, 255, 0.05)",
+                      "surface": "#181309",
+                      "inverse-surface": "#ece1d0",
+                      "on-primary": "#3f2e00",
+                      "primary": "#ffe4af",
+                      "tertiary-fixed-dim": "#00daf8",
+                      "tertiary-container": "#00defd",
+                      "primary-fixed": "#ffdf9e",
+                      "on-error": "#690005",
+                      "instagram-rose": "#E4405F",
+                      "on-primary-fixed": "#261a00",
+                      "tertiary-fixed": "#a5eeff",
+                      "on-background": "#ece1d0",
+                      "secondary-fixed": "#66ff8e",
+                      "inverse-on-surface": "#363024",
+                      "primary-fixed-dim": "#fabd00",
+                      "tertiary": "#b4f0ff",
+                      "on-primary-fixed-variant": "#5b4300",
+                      "void-black": "#020617",
+                      "surface-dim": "#181309",
+                      "nebula-gray": "#D1D5DB",
+                      "surface-tint": "#fabd00",
+                      "on-tertiary": "#00363f",
+                      "error-container": "#93000a",
+                      "surface-container-high": "#2f291e",
+                      "outline-variant": "#4f4632",
+                      "error": "#ffb4ab",
+                      "surface-container-highest": "#3a3428",
+                      "on-primary-container": "#6d5100",
+                      "on-tertiary-fixed-variant": "#004e5a",
+                      "secondary-fixed-dim": "#3de273",
+                      "surface-container": "#241f14",
+                      "background": "#181309",
+                      "secondary-container": "#06c85d",
+                      "inverse-primary": "#785900",
+                      "on-surface-variant": "#d4c5ab",
+                      "on-surface": "#ece1d0",
+                      "border-glow": "rgba(255, 193, 7, 0.25)",
+                      "on-tertiary-fixed": "#001f25",
+                      "on-secondary-fixed-variant": "#005322",
+                      "surface-container-lowest": "#120e05",
+                      "on-secondary": "#003915",
+                      "surface-bright": "#3f382d",
+                      "primary-container": "#ffc107",
+                      "midnight-nebula": "#050816",
+                      "surface-container-low": "#201b11",
+                      "on-secondary-container": "#004d1f",
+                      "outline": "#9c8f78",
+                      "on-error-container": "#ffdad6",
+                      "surface-variant": "#3a3428",
+                      "on-secondary-fixed": "#002109",
+                      "secondary": "#41e575",
+                      "on-tertiary-container": "#005e6c",
+                      "deep-space": "#000814"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "card-padding": "32px",
+                      "section-gap": "80px",
+                      "section-gap-mobile": "48px",
+                      "container-max": "1200px",
+                      "gutter": "24px"
+              },
+              "fontFamily": {
+                      "body-bold": ["Inter"],
+                      "headline-sm": ["Poppins"],
+                      "display-lg-mobile": ["Poppins"],
+                      "headline-md": ["Poppins"],
+                      "body-lg": ["Inter"],
+                      "label-caps": ["Inter"],
+                      "display-lg": ["Poppins"],
+                      "body-base": ["Inter"]
+              },
+              "fontSize": {
+                      "body-bold": ["16px", {"lineHeight": "1.6", "fontWeight": "600"}],
+                      "headline-sm": ["24px", {"lineHeight": "1.4", "fontWeight": "700"}],
+                      "display-lg-mobile": ["36px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "800"}],
+                      "headline-md": ["32px", {"lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                      "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                      "label-caps": ["12px", {"lineHeight": "1", "letterSpacing": "0.1em", "fontWeight": "700"}],
+                      "display-lg": ["56px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                      "body-base": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}]
+              }
+            },
+          },
+        }
+    </script>
+</head>
+<body class="bg-midnight-nebula text-on-surface font-body-base overflow-x-hidden selection:bg-primary-container selection:text-on-primary-container">
+<!-- Top Navigation Bar -->
+<nav class="fixed top-0 w-full z-50 backdrop-blur-3xl bg-midnight-nebula/80 border-b border-white/10 shadow-2xl">
+<div class="flex justify-between items-center max-w-container-max mx-auto px-gutter py-4">
+<a class="font-headline-md text-headline-md text-primary-fixed-dim tracking-tight" href="#">The Pet Corner</a>
+<div class="hidden md:flex items-center space-x-8">
+<a class="text-on-surface hover:text-primary transition-colors duration-300 font-body-base text-body-base" href="#">Home</a>
+<a class="text-on-surface hover:text-primary transition-colors duration-300 font-body-base text-body-base" href="#">About Us</a>
+<a class="text-primary border-b-2 border-primary pb-1 font-body-base text-body-base" href="#">Services</a>
+<a class="text-on-surface hover:text-primary transition-colors duration-300 font-body-base text-body-base" href="#">Shop</a>
+<a class="text-on-surface hover:text-primary transition-colors duration-300 font-body-base text-body-base" href="#">Gallery</a>
+<a class="text-on-surface hover:text-primary transition-colors duration-300 font-body-base text-body-base" href="#">Blog</a>
+<a class="text-on-surface hover:text-primary transition-colors duration-300 font-body-base text-body-base" href="#">Contact</a>
+</div>
+<div class="flex items-center space-x-6">
+<button class="material-symbols-outlined text-primary hover:scale-110 transition-transform cursor-pointer">search</button>
+<button class="material-symbols-outlined text-primary hover:scale-110 transition-transform cursor-pointer">shopping_cart</button>
+<button class="material-symbols-outlined text-primary hover:scale-110 transition-transform cursor-pointer">chat</button>
+</div>
+</div>
+</nav>
+<main class="pt-32 relative">
+<!-- Background Elements -->
+<div class="absolute inset-0 star-field opacity-40 pointer-events-none"></div>
+
+<!-- Page Header -->
+<section class="max-w-container-max mx-auto px-gutter relative z-10 mb-section-gap">
+<span class="font-label-caps text-label-caps text-primary-fixed tracking-widest block mb-4">OUR SPECIALIZED SERVICES</span>
+<h1 class="font-display-lg text-display-lg md:text-display-lg text-primary-fixed-dim mb-6 max-w-3xl">Comprehensive Care for Your Best Friend.</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">From emergency veterinary medicine to luxury grooming retreats, we provide a holistic approach to pet well-being in a premium setting.</p>
+</section>
+<!-- Service Deep Dive Section: Veterinary -->
+<section class="max-w-container-max mx-auto px-gutter mb-section-gap relative z-10">
+<div class="watermark-text absolute -top-20 -left-20">VETERINARY</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+<div class="lg:col-span-7">
+<div class="glass-panel p-card-padding rounded-xl glow-pulse relative overflow-hidden">
+<div class="flex items-center gap-4 mb-8">
+<span class="material-symbols-outlined text-primary text-4xl p-3 bg-primary/10 rounded-full">medical_services</span>
+<h2 class="font-headline-md text-headline-md text-primary-fixed">Elite Veterinary Care</h2>
+</div>
+<p class="font-body-lg text-body-lg mb-8 text-on-surface">Our world-class facility offers a complete suite of medical services, ranging from routine wellness checks to advanced surgical procedures, led by a team of specialist doctors.</p>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<ul class="space-y-4">
+<li class="flex items-center gap-3"><span class="material-symbols-outlined text-primary text-sm">check_circle</span> 24/7 Emergency Response</li>
+<li class="flex items-center gap-3"><span class="material-symbols-outlined text-primary text-sm">check_circle</span> Digital Radiography &amp; Ultrasound</li>
+<li class="flex items-center gap-3"><span class="material-symbols-outlined text-primary text-sm">check_circle</span> Advanced Dental Surgery</li>
+</ul>
+<ul class="space-y-4">
+<li class="flex items-center gap-3"><span class="material-symbols-outlined text-primary text-sm">check_circle</span> Specialized Oncology Care</li>
+<li class="flex items-center gap-3"><span class="material-symbols-outlined text-primary text-sm">check_circle</span> Preventive Immunization</li>
+<li class="flex items-center gap-3"><span class="material-symbols-outlined text-primary text-sm">check_circle</span> Internal Medicine</li>
+</ul>
+</div>
+<div class="mt-12 flex flex-wrap gap-4">
+<button class="bg-primary-container text-on-primary-container px-8 py-3 rounded-full font-body-bold flex items-center gap-2 hover:scale-105 transition-all">
+                                Book Consultation <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+<button class="bg-glass-bg border border-white/10 px-8 py-3 rounded-full font-body-bold hover:bg-white/10 transition-all">
+                                View Pricing
+                            </button>
+</div>
+</div>
+</div>
+<div class="lg:col-span-5 relative">
+<div class="floating relative">
+<div class="absolute -inset-4 bg-primary/20 blur-3xl rounded-full"></div>
+<img class="rounded-2xl relative z-10 shadow-2xl border border-white/10 w-full object-cover aspect-[4/5]" data-alt="A professional close-up of a modern, clinical veterinary environment within a luxury pet care boutique. A calm, well-behaved golden retriever is being examined by a veterinarian in stylish navy blue scrubs. The lighting is soft and warm, reflecting off polished glass and metallic surfaces. The color palette emphasizes deep golds and midnight blues, creating an atmosphere of trust, prestige, and advanced medical care." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBdbNdnb_eHp9ZDJU-6d3OtIJL6FknsFge9uJFrkMH2onBQERhs5ulaV9TPo6Ofg4bPp2SxhRqBsCr2_srZ2nEiSTr_h4W-sWOOwQDeKNOht_Dt3AsEVUO1YfjNTXJDx5jYb_Bzvb8IB4YtHJY9xzJB_vHv13ol-VZNbMf37EAQ0p1gtShS3bKk4FiBPfWwzvkIzSpBxnaiiFCx9OTb7-NW8o9s7aHsLESieSaF2x_5lk_Phli7CB0Ek6Gvxq9BKsq0aLu31DxZgRUP"/>
+</div>
+<div class="absolute -bottom-10 -right-10 glass-panel p-6 rounded-xl border-primary/30 border hidden md:block">
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<p class="italic text-on-surface-variant">"The level of care here is unmatched."</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Bento Grid Services Feature List -->
+<section class="max-w-container-max mx-auto px-gutter mb-section-gap relative z-10">
+<h2 class="font-headline-md text-headline-md text-primary-fixed mb-12 text-center">Beyond Basic Care</h2>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Grooming Card -->
+<div class="md:col-span-2 glass-panel p-card-padding rounded-xl relative overflow-hidden group hover:border-primary/40 transition-colors">
+<div class="watermark-text absolute -bottom-10 -right-10 opacity-[0.03]">RELAX</div>
+<div class="relative z-10 flex flex-col md:flex-row gap-8 items-center">
+<div class="md:w-1/2">
+<div class="flex items-center gap-3 mb-4">
+<span class="material-symbols-outlined text-primary text-3xl">content_cut</span>
+<h3 class="font-headline-sm text-headline-sm text-primary">Luxury Grooming</h3>
+</div>
+<p class="mb-6 text-on-surface-variant">Our spa-inspired grooming lounge features high-velocity drying, organic botanical shampoos, and certified master stylists who specialize in breed-standard cuts.</p>
+<ul class="space-y-2 mb-8">
+<li class="flex items-center gap-2"><span class="material-symbols-outlined text-secondary text-sm">done</span> Hand-stripping &amp; Scissoring</li>
+<li class="flex items-center gap-2"><span class="material-symbols-outlined text-secondary text-sm">done</span> Ozone Hydro-massage Therapy</li>
+<li class="flex items-center gap-2"><span class="material-symbols-outlined text-secondary text-sm">done</span> Pawdicures &amp; Ear Cleaning</li>
+</ul>
+<a class="text-primary font-body-bold flex items-center gap-2 group-hover:translate-x-2 transition-transform" href="#">Schedule Spa Day <span class="material-symbols-outlined">trending_flat</span></a>
+</div>
+<div class="md:w-1/2 rounded-lg overflow-hidden border border-white/5">
+<img class="w-full h-full object-cover" data-alt="A luxurious pet grooming scene featuring a fluffy white Samoyed dog receiving a relaxing bubble bath in a sleek, black marble tub. Bubbles are shimmering under golden accent lighting, and the background shows high-end grooming tools neatly arranged on a glass shelf. The overall mood is sophisticated, spa-like, and serene, utilizing a dark theme with vibrant gold highlights to emphasize luxury pet care." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAFOhbFiHM2VtIssNWIPnGMUAcan1pnQvLDeOkW6CiByjiYARIUxNYfK9Mw9EEzbcSIyCh7jKmQG2JtS2HzqFe4A8q5CDohylWjayVLofw-qwCjBbnnhVLZAY5273xUDBrhXFTJLdnwhnlQQzFOUy1FaCB0Ss7PLKdVl5C4EsgbaJSf7VT0JmSIo3lLogajYqjj-FA01KKA9mL5rRnTwRpssRo3qjkWH47AMIrJb4Ro6LrK1f7SgsOilRAbw1mmoKeSafjhiwzWRX7k"/>
+</div>
+</div>
+</div>
+<!-- Nutrition Card -->
+<div class="glass-panel p-card-padding rounded-xl relative overflow-hidden group hover:border-primary/40 transition-colors flex flex-col">
+<span class="material-symbols-outlined text-primary text-5xl mb-6">restaurant</span>
+<h3 class="font-headline-sm text-headline-sm text-primary mb-4">Precision Nutrition</h3>
+<p class="text-on-surface-variant flex-grow">Customized dietary plans based on breed, age, and metabolic profiles. We source only human-grade ingredients and specialized prescription diets.</p>
+<div class="mt-8 pt-8 border-t border-white/10">
+<span class="bg-secondary/10 text-secondary px-3 py-1 rounded text-xs font-label-caps inline-block mb-4">NEW SERVICE</span>
+<div class="flex -space-x-3">
+<div class="w-10 h-10 rounded-full border-2 border-midnight-nebula bg-gray-500 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Macro photography of high-end organic pet food pellets made from salmon and sweet potato, arranged artistically on a dark slate surface. The textures are sharp and detailed, with a soft golden glow illuminating the ingredients from the side. The style is editorial and premium, highlighting the quality and nutritional value of the food." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDn-2EW3IsnWRK75eFEG75yS_YajvEI6VuZAMw0e7vjOYCZvDYfbOwSogUMNOH3KGXU0t7eq-yd4Gj7Qb-yan0h1XoaTmLK4bYXTb4wi20waBcv-YM7Tap5o5Oc0G1zoayAqiwvAF-GiBl5uNNoDnUJJyfgvtLIpxJiqV87b0E3mYBGSlnXrHRg0ja6DICW0jIb8f_Z9oe7hm7_32LA88Zpiy5ND3lOKSCa9IOlSSQPHjkK721a4bKXqUl5utEvw0SLTK-KMgeWaJRI"/>
+</div>
+<div class="w-10 h-10 rounded-full border-2 border-midnight-nebula flex items-center justify-center bg-primary-container text-on-primary-container text-xs font-bold">+5</div>
+</div>
+</div>
+</div>
+<!-- Accessories Bento -->
+<div class="glass-panel p-card-padding rounded-xl relative overflow-hidden group hover:border-primary/40 transition-colors">
+<h3 class="font-headline-sm text-headline-sm text-primary mb-4">Boutique Accessories</h3>
+<p class="text-on-surface-variant mb-6">Hand-crafted Italian leather collars, orthopedic memory foam beds, and designer apparel for the fashion-forward pet.</p>
+<div class="h-48 rounded-lg overflow-hidden relative">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="A collection of luxury pet accessories displayed on a minimalist backlit shelf. Featured items include a gold-buckled emerald leather collar, a sleek minimalist ceramic water bowl, and a high-tech smart tracker. The lighting is focused and dramatic, typical of a high-end luxury retail store, set against a dark, textured background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAV-Emun337fNBiiadhEaioZ-qVTRxqjesSkY8L9oM-mM8YJVyel03R821AsXNlxqhMEVZpkW1gU5Ty6j25Xg7w7xWwW3fcmA4kuSTd7dGJa2_4B6gfvelZBBjf3YVm33EuQQz6gIABaMS0fXi6nRf68NmQbdyGHul7xM-WO4_cebTmOUTW_cu7FAznMtBR7w2DL9K-iXO48iQIL8q9z4PwusZu_q4AB1WRECrxdGRDdi2Z7-XAJeYp9qHuCrUzwAgoMQtZHQFqHkv9"/>
+<div class="absolute top-4 right-4 bg-primary-container text-on-primary-container font-label-caps px-2 py-1 rounded text-[10px]">PREMIUM COLLECTION</div>
+</div>
+</div>
+<!-- Pet Treatments Bento -->
+<div class="md:col-span-2 glass-panel p-card-padding rounded-xl relative overflow-hidden flex flex-col md:flex-row gap-8 items-center group hover:border-primary/40 transition-colors">
+<div class="md:w-1/3">
+<img class="rounded-xl shadow-2xl border border-white/10" data-alt="A stylized digital illustration of a pet health monitoring app interface on a glass device, showing glowing bio-metric data for a cat. Th
