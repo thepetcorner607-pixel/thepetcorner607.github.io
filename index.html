@@ -1,603 +1,455 @@
 <!DOCTYPE html>
+import React, { useState, useEffect, useCallback } from "react";
+import {
+  ShoppingCart, Search, User, Star, Plus, Minus, X, Check,
+  Package, LogOut, ChevronRight, ChevronLeft, Smartphone, Shirt,
+  Home as HomeIcon, Gamepad2, ShoppingBasket, Sparkles, MapPin,
+  CreditCard, Truck, ArrowLeft, Loader2, LayoutGrid, Mail,
+  Instagram, MessageCircle
+} from "lucide-react";
 
-<html class="dark" lang="en"><head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+/* Custom brand icons (lucide no longer ships social/brand icons) */
+function WhatsAppIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" {...props}>
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.372-.025-.521-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+      <path d="M12.02 2C6.5 2 2 6.477 2 11.98c0 1.987.578 3.837 1.573 5.396L2.05 22l4.75-1.485a10.03 10.03 0 0 0 5.22 1.436h.005c5.52 0 10.02-4.477 10.02-9.98C22.045 6.477 17.54 2 12.02 2zm0 18.1h-.004a8.14 8.14 0 0 1-4.15-1.14l-.298-.176-3.09.965.973-3.043-.194-.312a8.1 8.1 0 0 1-1.25-4.415c0-4.492 3.65-8.144 8.017-8.144 2.14 0 4.15.836 5.665 2.353a7.95 7.95 0 0 1 2.35 5.652c0 4.492-3.653 8.26-8.02 8.26z"/>
+    </svg>
+  );
+}
+function InstagramIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" {...props}>
+      <rect x="3" y="3" width="18" height="18" rx="5" />
+      <circle cx="12" cy="12" r="4" />
+      <circle cx="17.2" cy="6.8" r="0.9" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
 
-<title>The Pet Corner | Pet Gallery</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Poppins:wght@700;800&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Poppins:wght@100..900&display=swap" rel="stylesheet"/>
-<style>
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 48;
-        }
-        
-        body {
-            background-color: #020617;
-            color: #ece1d0;
-            overflow-x: hidden;
-        }
+/* ---------------------------------------------------------
+   DUKAAN — a general mixed-goods store
+   Token system:
+   Color: base #F6F5F0 (warm paper), ink #22242A, indigo #2B3A67,
+          marigold #E8A33D, teal #3E7C6B, brick #C1512F
+   Type: Fraunces (display, characterful serif) + Manrope (UI/body)
+   Signature: category "signboards" — hand-painted bazaar shop
+              signs instead of a banner slider
+--------------------------------------------------------- */
 
-        .glass-card {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
+const CATEGORIES = [
+  { id: "electronics", name: "Electronics", icon: Smartphone, color: "#2B3A67" },
+  { id: "fashion", name: "Fashion", icon: Shirt, color: "#E8A33D" },
+  { id: "home", name: "Home & Living", icon: HomeIcon, color: "#3E7C6B" },
+  { id: "toys", name: "Toys & Kids", icon: Gamepad2, color: "#C1512F" },
+  { id: "grocery", name: "Grocery", icon: ShoppingBasket, color: "#557A46" },
+  { id: "beauty", name: "Beauty", icon: Sparkles, color: "#B0568C" },
+];
 
-        .glass-card:hover {
-            border-color: rgba(255, 193, 7, 0.25);
-            box-shadow: 0 0 20px rgba(255, 193, 7, 0.15);
-            transform: translateY(-4px) scale(1.02);
-        }
+const PRODUCTS = [
+  { id: "p1", name: "Wireless Earbuds Pro", category: "electronics", price: 2499, mrp: 3999, rating: 4.3, desc: "40hr battery, active noise cancellation, USB-C charging case." },
+  { id: "p2", name: "Smart LED Desk Lamp", category: "electronics", price: 1199, mrp: 1799, rating: 4.1, desc: "Touch dimmer, 3 light modes, USB powered." },
+  { id: "p3", name: "10000mAh Power Bank", category: "electronics", price: 899, mrp: 1499, rating: 4.4, desc: "Dual output, fast charging, pocket-sized." },
+  { id: "p4", name: "Cotton Kurta — Men", category: "fashion", price: 799, mrp: 1299, rating: 4.0, desc: "Breathable cotton, straight fit, everyday wear." },
+  { id: "p5", name: "Handloom Saree", category: "fashion", price: 2199, mrp: 3499, rating: 4.6, desc: "Pure cotton handloom weave, festive collection." },
+  { id: "p6", name: "Canvas Sneakers", category: "fashion", price: 1099, mrp: 1799, rating: 4.2, desc: "Unisex, all-day comfort, machine washable." },
+  { id: "p7", name: "Non-Stick Cookware Set", category: "home", price: 1799, mrp: 2999, rating: 4.5, desc: "5-piece set, induction friendly, 2yr warranty." },
+  { id: "p8", name: "Cotton Bedsheet Set", category: "home", price: 899, mrp: 1499, rating: 4.3, desc: "King size, 2 pillow covers, 300 thread count." },
+  { id: "p9", name: "Bamboo Storage Rack", category: "home", price: 1399, mrp: 2199, rating: 4.1, desc: "3-tier, easy assembly, sustainable material." },
+  { id: "p10", name: "Building Blocks Set — 200pc", category: "toys", price: 649, mrp: 999, rating: 4.7, desc: "Compatible with major brands, ages 4+." },
+  { id: "p11", name: "Remote Control Car", category: "toys", price: 999, mrp: 1599, rating: 4.2, desc: "Rechargeable, all-terrain, 20 min runtime." },
+  { id: "p12", name: "Art & Craft Kit", category: "toys", price: 549, mrp: 899, rating: 4.4, desc: "50+ pieces, non-toxic, ages 5+." },
+  { id: "p13", name: "Basmati Rice — 5kg", category: "grocery", price: 549, mrp: 699, rating: 4.5, desc: "Aged, extra-long grain, aromatic." },
+  { id: "p14", name: "Cold-Pressed Mustard Oil", category: "grocery", price: 299, mrp: 399, rating: 4.3, desc: "1L, chemical-free extraction." },
+  { id: "p15", name: "Herbal Face Wash", category: "beauty", price: 249, mrp: 399, rating: 4.0, desc: "Neem & tulsi, all skin types, 100ml." },
+  { id: "p16", name: "Argan Hair Oil", category: "beauty", price: 349, mrp: 549, rating: 4.4, desc: "Nourishing blend, 200ml, sulfate-free." },
+];
 
-        .cosmic-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            background: radial-gradient(circle at 50% 50%, #050816 0%, #020617 100%);
-        }
+const money = (n) => "₹" + n.toLocaleString("en-IN");
 
-        .star-field {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background-image: 
-                radial-gradient(2px 2px at 20px 30px, #eee, rgba(0,0,0,0)),
-                radial-gradient(2px 2px at 40px 70px, #fff, rgba(0,0,0,0)),
-                radial-gradient(2px 2px at 50px 160px, #ddd, rgba(0,0,0,0)),
-                radial-gradient(2px 2px at 90px 40px, #fff, rgba(0,0,0,0)),
-                radial-gradient(2px 2px at 130px 80px, #fff, rgba(0,0,0,0)),
-                radial-gradient(2px 2px at 160px 120px, #ddd, rgba(0,0,0,0));
-            background-repeat: repeat;
-            background-size: 200px 200px;
-            opacity: 0.15;
-            animation: stars-move 100s linear infinite;
-        }
+function useToast() {
+  const [toast, setToast] = useState(null);
+  const show = useCallback((msg) => {
+    setToast(msg);
+    setTimeout(() => setToast(null), 2200);
+  }, []);
+  return [toast, show];
+}
 
-        @keyframes stars-move {
-            from { transform: translateY(0); }
-            to { transform: translateY(-1000px); }
-        }
+export default function App() {
+  const [page, setPage] = useState("home");
+  const [category, setCategory] = useState(null);
+  const [activeProduct, setActiveProduct] = useState(null);
+  const [user, setUser] = useState(null);
+  const [cart, setCart] = useState({});
+  const [orders, setOrders] = useState([]);
+  const [booting, setBooting] = useState(true);
+  const [toast, showToast] = useToast();
+  const [authMode, setAuthMode] = useState("login");
+  const [searchQuery, setSearchQuery] = useState("");
 
-        .watermark-text {
-            position: absolute;
-            font-size: 15rem;
-            font-weight: 900;
-            color: white;
-            opacity: 0.02;
-            white-space: nowrap;
-            pointer-events: none;
-            user-select: none;
-            z-index: 0;
-            top: 20%;
-            left: -10%;
-            transform: rotate(-5deg);
+  // ---- boot: restore session ----
+  useEffect(() => {
+    (async () => {
+      try {
+        const session = await window.storage.get("session:current", false);
+        if (session?.value) {
+          const email = JSON.parse(session.value);
+          await loadUserData(email);
         }
+      } catch (e) {
+        // no session yet
+      } finally {
+        setBooting(false);
+      }
+    })();
+    // eslint-disable-next-line
+  }, []);
 
-        .gold-glow {
-            filter: drop-shadow(0 0 10px rgba(255, 193, 7, 0.4));
-        }
-    </style>
-<script id="tailwind-config">
-        tailwind.config = {
-          darkMode: "class",
-          theme: {
-            extend: {
-              "colors": {
-                      "glass-bg": "rgba(255, 255, 255, 0.05)",
-                      "surface": "#181309",
-                      "inverse-surface": "#ece1d0",
-                      "on-primary": "#3f2e00",
-                      "primary": "#ffe4af",
-                      "tertiary-fixed-dim": "#00daf8",
-                      "tertiary-container": "#00defd",
-                      "primary-fixed": "#ffdf9e",
-                      "on-error": "#690005",
-                      "instagram-rose": "#E4405F",
-                      "on-primary-fixed": "#261a00",
-                      "tertiary-fixed": "#a5eeff",
-                      "on-background": "#ece1d0",
-                      "secondary-fixed": "#66ff8e",
-                      "inverse-on-surface": "#363024",
-                      "primary-fixed-dim": "#fabd00",
-                      "tertiary": "#b4f0ff",
-                      "on-primary-fixed-variant": "#5b4300",
-                      "void-black": "#020617",
-                      "surface-dim": "#181309",
-                      "nebula-gray": "#D1D5DB",
-                      "surface-tint": "#fabd00",
-                      "on-tertiary": "#00363f",
-                      "error-container": "#93000a",
-                      "surface-container-high": "#2f291e",
-                      "outline-variant": "#4f4632",
-                      "error": "#ffb4ab",
-                      "surface-container-highest": "#3a3428",
-                      "on-primary-container": "#6d5100",
-                      "on-tertiary-fixed-variant": "#004e5a",
-                      "secondary-fixed-dim": "#3de273",
-                      "surface-container": "#241f14",
-                      "background": "#181309",
-                      "secondary-container": "#06c85d",
-                      "inverse-primary": "#785900",
-                      "on-surface-variant": "#d4c5ab",
-                      "on-surface": "#ece1d0",
-                      "border-glow": "rgba(255, 193, 7, 0.25)",
-                      "on-tertiary-fixed": "#001f25",
-                      "on-secondary-fixed-variant": "#005322",
-                      "surface-container-lowest": "#120e05",
-                      "on-secondary": "#003915",
-                      "surface-bright": "#3f382d",
-                      "primary-container": "#ffc107",
-                      "midnight-nebula": "#050816",
-                      "surface-container-low": "#201b11",
-                      "on-secondary-container": "#004d1f",
-                      "outline": "#9c8f78",
-                      "on-error-container": "#ffdad6",
-                      "surface-variant": "#3a3428",
-                      "on-secondary-fixed": "#002109",
-                      "secondary": "#41e575",
-                      "on-tertiary-container": "#005e6c",
-                      "deep-space": "#000814"
-              },
-              "borderRadius": {
-                      "DEFAULT": "0.25rem",
-                      "lg": "0.5rem",
-                      "xl": "0.75rem",
-                      "full": "9999px"
-              },
-              "spacing": {
-                      "card-padding": "32px",
-                      "section-gap": "80px",
-                      "section-gap-mobile": "48px",
-                      "container-max": "1200px",
-                      "gutter": "24px"
-              },
-              "fontFamily": {
-                      "body-bold": ["Inter"],
-                      "headline-sm": ["Poppins"],
-                      "display-lg-mobile": ["Poppins"],
-                      "headline-md": ["Poppins"],
-                      "body-lg": ["Inter"],
-                      "label-caps": ["Inter"],
-                      "display-lg": ["Poppins"],
-                      "body-base": ["Inter"]
-              },
-              "fontSize": {
-                      "body-bold": ["16px", {"lineHeight": "1.6", "fontWeight": "600"}],
-                      "headline-sm": ["24px", {"lineHeight": "1.4", "fontWeight": "700"}],
-                      "display-lg-mobile": ["36px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "800"}],
-                      "headline-md": ["32px", {"lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "700"}],
-                      "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
-                      "label-caps": ["12px", {"lineHeight": "1", "letterSpacing": "0.1em", "fontWeight": "700"}],
-                      "display-lg": ["56px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800"}],
-                      "body-base": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}]
-              }
-            },
-          },
-        }
-    </script>
-</head>
-<body class="font-body-base text-on-surface selection:bg-primary-container selection:text-on-primary">
-<div class="cosmic-bg">
-<div class="star-field"></div>
-</div>
-<div class="watermark-text">ELITE PETS</div>
-<!-- TopNavBar -->
-<header class="fixed top-0 w-full z-50 backdrop-blur-3xl bg-midnight-nebula/80 border-b border-white/10 shadow-2xl">
-<div class="flex justify-between items-center max-w-container-max mx-auto px-gutter py-4">
-<div class="flex items-center gap-2">
-<span class="material-symbols-outlined text-primary-fixed-dim text-headline-md" style="font-variation-settings: 'FILL' 1;">pets</span>
-<span class="font-headline-md text-headline-md text-primary-fixed-dim tracking-tight">The Pet Corner</span>
-</div>
-<nav class="hidden md:flex items-center gap-8">
-<a class="font-body-base text-body-base text-on-surface hover:text-primary transition-colors duration-300" href="#">Home</a>
-<a class="font-body-base text-body-base text-on-surface hover:text-primary transition-colors duration-300" href="#">About Us</a>
-<a class="font-body-base text-body-base text-on-surface hover:text-primary transition-colors duration-300" href="#">Services</a>
-<a class="font-body-base text-body-base text-primary border-b-2 border-primary pb-1" href="#">Gallery</a>
-<a class="font-body-base text-body-base text-on-surface hover:text-primary transition-colors duration-300" href="#">Shop</a>
-<a class="font-body-base text-body-base text-on-surface hover:text-primary transition-colors duration-300" href="#">Contact</a>
-</nav>
-<div class="flex items-center gap-4">
-<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-all p-2 rounded-full hover:bg-glass-bg">search</button>
-<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-all p-2 rounded-full hover:bg-glass-bg">shopping_cart</button>
-<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-all p-2 rounded-full hover:bg-glass-bg">chat</button>
-</div>
-</div>
-</header>
-<main class="relative pt-32 pb-section-gap">
-<!-- Hero Section / Mission -->
-<section class="max-w-container-max mx-auto px-gutter mb-section-gap relative overflow-hidden">
-<div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-<div class="relative z-10">
-<span class="font-label-caps text-label-caps text-primary uppercase tracking-widest mb-4 block">Our Heart & Mission</span>
-<h1 class="font-display-lg text-display-lg-mobile md:text-display-lg text-on-surface mb-6 leading-tight">Finding Forever Homes in the <span class="text-primary-fixed-dim">Cosmos</span>.</h1>
-<p class="font-body-lg text-body-lg text-on-surface-variant mb-8 max-w-xl">
-                        At The Pet Corner, we believe every pet is a celestial gift. Our adoption mission bridges the gap between stray hearts and loving families, ensuring that every dog, cat, and bird finds their true constellation.
-                    </p>
-<div class="flex flex-wrap gap-4">
-<button class="bg-primary-container text-on-primary px-8 py-3 rounded-full font-body-bold text-body-bold hover:scale-105 transition-all shadow-lg shadow-primary/20 flex items-center gap-2">
-<span>Adopt Now</span>
-<span class="material-symbols-outlined text-sm">labs</span>
-</button>
-<button class="bg-glass-bg border border-white/10 text-on-surface px-8 py-3 rounded-full font-body-bold text-body-bold hover:bg-white/10 transition-all flex items-center gap-2">
-<span>Our Process</span>
-<span class="material-symbols-outlined">arrow_forward</span>
-</button>
-</div>
-</div>
-<div class="relative hidden md:block">
-<div class="absolute inset-0 bg-primary-container/20 blur-[120px] rounded-full scale-75"></div>
-<div class="relative z-10 w-full aspect-square rounded-full border border-primary/20 p-8">
-<div class="w-full h-full rounded-full overflow-hidden border-2 border-primary-fixed">
-<img class="w-full h-full object-cover" data-alt="A professional studio portrait of a majestic Golden Retriever looking directly at the camera with a gentle expression. The background features a deep cosmic midnight nebula with golden sparkles and a soft luminous glow behind the dog's head, creating a high-end luxury pet service aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD89jHnTSinKmcvJ2vlJDTahWR3JDVrVxDK4OQlgAL1cCbRplY511FSJigZns82zeijKj-dXbsXxQ_Hn5QSACx_xiaEt_B9MvP19DZZC1KDPqHLUPFjq7jN9rblV3J1ybV-XOkxja5q0dMGUAfWyluuZgVi8GiRRWKmzpjnPtG61ImUxYxa9lslgRjvveUc3rj1oUT_JanSkz59AVleFW7HOg2vwKJ1eJO3N2_wgW51HIBvLW6bOrI4xVp0F61-U2GGDCGUJOZM9xaP"/>
-</div>
-</div>
-</div>
-</div>
-</section>
-<!-- Gallery Filter -->
-<section class="max-w-container-max mx-auto px-gutter mb-12">
-<div class="flex flex-wrap items-center justify-center gap-4">
-<button class="px-6 py-2 rounded-full glass-card text-primary font-body-bold">All Pets</button>
-<button class="px-6 py-2 rounded-full glass-card hover:text-primary transition-colors font-body-bold">Dogs</button>
-<button class="px-6 py-2 rounded-full glass-card hover:text-primary transition-colors font-body-bold">Cats</button>
-<button class="px-6 py-2 rounded-full glass-card hover:text-primary transition-colors font-body-bold">Birds</button>
-<button class="px-6 py-2 rounded-full glass-card hover:text-primary transition-colors font-body-bold">Exotic</button>
-</div>
-</section>
-<!-- Bento Grid Gallery -->
-<section class="max-w-container-max mx-auto px-gutter">
-<div class="grid grid-cols-1 md:grid-cols-12 gap-6 auto-rows-[320px]">
-<!-- Large Card 1: Dog -->
-<div class="md:col-span-8 glass-card rounded-3xl overflow-hidden group">
-<div class="relative w-full h-full">
-<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" data-alt="A portrait of a white Samoyed dog with a thick, fluffy coat, standing in a sleek modern indoor environment with dark slate walls and golden accent lighting. The dog has a happy, smiling expression, looking away from the camera. Cinematic lighting highlights its fur texture against the premium dark background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAfr26MIf5PldThD6bRjlXEHQ_ozDxpULAjbTC94H5PWAyfrmkckSGuKRyUDXdcVmgtCsIjmhHsEezxL5AFzu1IHWWeMlAsEVDelLERgEgaIHhu7e5rEEvFkPlLMtb9bGD-mVVg5iwZ3PUz7lA12sGTF3pX5jl5egDYkklaqBhazyjML4u63Ra3ONLxVHg1lrthdSphy0Z_qzU4nQ4aRpOmlvfg1MpYeAn6jlzOSUalJyEMtfcfkXPnSix32YrvvEdhOp7Q2wlj1L8M"/>
-<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-8">
-<div class="flex justify-between items-end">
-<div>
-<span class="bg-secondary px-3 py-1 rounded-full text-[10px] font-bold text-on-secondary mb-2 inline-block">MOST PLAYFUL</span>
-<h3 class="font-headline-md text-headline-md text-white">Ghost</h3>
-<p class="text-white/70 font-body-base">2-Year-old Samoyed</p>
-</div>
-<button class="bg-primary-container text-on-primary px-6 py-3 rounded-full font-body-bold hover:scale-105 active:scale-95 transition-all flex items-center gap-2">
-                                    Meet Me <span class="material-symbols-outlined text-sm">favorite</span>
-</button>
-</div>
-</div>
-</div>
-</div>
-<!-- Small Card 1: Cat -->
-<div class="md:col-span-4 glass-card rounded-3xl overflow-hidden group">
-<div class="relative w-full h-full">
-<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" data-alt="Close up of a sleek black Bombay cat with piercing golden eyes. The cat is perfectly silhouetted against a dark galaxy background with subtle star particles. The lighting is low-key, emphasizing the glossy texture of its fur and the intensity of its amber-colored eyes, embodying a luxury space aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBaoXebjcKvTqvEwdbwBnYnVYW6IgXCeEEqBk6NzdISQ_SawtNmICejJFR1ONXLpO1fYGvNzjWlzdQ6lfDpkzmuHTuoylJ2YrHkRjvhIIoTsmLFgLE3bVbAE4gNU-bbKTH6zRXi9fNFEveghnGvuQuKWh2Wf2eM6L0CNbqFZALen3jp9OFEUvoVY43BvfMVrnhnVVUlBh1jmWrmmA6Y7WVuTQ6cZ3iUjX46Vz8jICLRUwj5LVg3953H7PkSGbilwZghRUKslAgazWrT"/>
-<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-6">
-<h3 class="font-headline-sm text-headline-sm text-white">Luna</h3>
-<p class="text-white/70 font-body-base mb-4">Bombay Cat</p>
-<button class="w-full bg-white/10 backdrop-blur-md text-white border border-white/20 py-2 rounded-xl font-body-bold hover:bg-primary-container hover:text-on-primary transition-all">
-                                Meet Me
-                            </button>
-</div>
-</div>
-</div>
-<!-- Card 3: Exotic Fish -->
-<div class="md:col-span-4 glass-card rounded-3xl overflow-hidden group">
-<div class="relative w-full h-full">
-<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" data-alt="A vibrant Betta fish with flowing red and purple translucent fins swimming in crystal clear water against a dark background. The lighting is dramatic, catching the iridescent scales and the delicate structures of the fins, creating a sense of ethereal beauty in a high-end aquarium setting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDk1tqJzvud-BF2xvYxFky-Ir_rzKNDsSH06J-RrQdhYhJ04UaPUqWvg9YGqgoDxlPeRChFmnLMIUfBD-QIFj4vSK93BzUMHz8nVqmGrXw15mDe-3bpbUvCsXrbUd6fCzKjypC6qwwFohoYweYiNIFEM6qXKxqtm5yG4YI8VuRt2yjpm38SixzTacxylDTZtAf4a8ua5UV9f9InsjWJ21zHMIO3XuHcBEZn6JqkB3dLUFkTHkddtPVGjcKLogL3nBtEVNk2YtvhHEkB"/>
-<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-6">
-<h3 class="font-headline-sm text-headline-sm text-white">Nebula</h3>
-<p class="text-white/70 font-body-base mb-4">Crown Tail Betta</p>
-<button class="w-full bg-white/10 backdrop-blur-md text-white border border-white/20 py-2 rounded-xl font-body-bold hover:bg-primary-container hover:text-on-primary transition-all">
-                                Meet Me
-                            </button>
-</div>
-</div>
-</div>
-<!-- Card 4: Bird -->
-<div class="md:col-span-4 glass-card rounded-3xl overflow-hidden group">
-<div class="relative w-full h-full">
-<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" data-alt="A brightly colored Sun Conure parrot perched on a dark wooden branch. Its feathers transition from vibrant orange to bright yellow and emerald green. The background is a soft-focus dark luxury interior. The parrot's feathers are rendered in high detail, showing individual textures under warm accent lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBn_NZ5o8YLBNpYjjZPAK8wRQBFTf_ZOAtmz-r04_lxXsb_8eQFZ4tfOADUCAEdkImbi1Pwz1w4gjNLwnu7QGHaQbkBKFPBfJQrTQ0aZGZC6mPfyDkih6Uj1qaRvczZyUyYU2d4YMb_epJwLv0NMxSTH7woKcW5Dg8F7SW0Hdm-d5gSjEZpbiXAmNkOWntgczRfXSTFRYTpIvZj_gq4a1-o-JyqUahWN0r7QH2GRe30-FRwXtymEou7FJkgiDuBePhoXj-9o0tuntTp"/>
-<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-6">
-<h3 class="font-headline-sm text-headline-sm text-white">Sunny</h3>
-<p class="text-white/70 font-body-base mb-4">Sun Conure</p>
-<button class="w-full bg-white/10 backdrop-blur-md text-white border border-white/20 py-2 rounded-xl font-body-bold hover:bg-primary-container hover:text-on-primary transition-all">
-                                Meet Me
-                            </button>
-</div>
-</div>
-</div>
-<!-- Small Card 5: Dog -->
-<div class="md:col-span-4 glass-card rounded-3xl overflow-hidden group">
-<div class="relative w-full h-full">
-<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" data-alt="A portrait of a French Bulldog with a unique merle coat pattern, sitting attentively on a designer leather ottoman. The room has high-end dark decor with subtle warm atmospheric lighting and gold trim details. The dog's ears are perked up, looking curious and alert." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB30aD7f_UXZ4z-dDUe5TRkUC1YIuJjryolqfiRVvchSxmK      
-<title>Service Details | The Pet Corner</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=Poppins:wght@700;800&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;family=Poppins:wght@100..900&amp;display=swap" rel="stylesheet"/>
-<style>
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 48;
-        }
-        
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
+  async function loadUserData(email) {
+    try {
+      const u = await window.storage.get(`user:${email}`, false);
+      if (u?.value) setUser(JSON.parse(u.value));
+    } catch (e) { /* ignore */ }
+    try {
+      const c = await window.storage.get(`cart:${email}`, false);
+      if (c?.value) setCart(JSON.parse(c.value));
+    } catch (e) { setCart({}); }
+    try {
+      const o = await window.storage.get(`orders:${email}`, false);
+      if (o?.value) setOrders(JSON.parse(o.value));
+    } catch (e) { setOrders([]); }
+  }
 
-        .glow-pulse {
-            animation: glow 3s infinite ease-in-out;
-        }
+  async function persistCart(email, nextCart) {
+    try { await window.storage.set(`cart:${email}`, JSON.stringify(nextCart), false); }
+    catch (e) { /* best-effort */ }
+  }
 
-        @keyframes glow {
-            0%, 100% { box-shadow: 0 0 5px rgba(255, 193, 7, 0.1); }
-            50% { box-shadow: 0 0 20px rgba(255, 193, 7, 0.3); }
-        }
+  function addToCart(product, qty = 1) {
+    if (!user) { setPage("auth"); showToast("Pehle login karein"); return; }
+    setCart((prev) => {
+      const next = { ...prev, [product.id]: (prev[product.id] || 0) + qty };
+      persistCart(user.email, next);
+      return next;
+    });
+    showToast(`${product.name} cart mein add ho gaya`);
+  }
 
-        .floating {
-            animation: floating 6s infinite ease-in-out;
-        }
+  function updateQty(productId, delta) {
+    setCart((prev) => {
+      const nextQty = (prev[productId] || 0) + delta;
+      const next = { ...prev };
+      if (nextQty <= 0) delete next[productId];
+      else next[productId] = nextQty;
+      if (user) persistCart(user.email, next);
+      return next;
+    });
+  }
 
-        @keyframes floating {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
-        }
+  async function handleAuth({ mode, name, email, password }) {
+    email = email.trim().toLowerCase();
+    if (!email || !password || (mode === "signup" && !name)) {
+      showToast("Sabhi fields bharein");
+      return;
+    }
+    try {
+      const existing = await window.storage.get(`user:${email}`, false).catch(() => null);
+      if (mode === "signup") {
+        if (existing?.value) { showToast("Ye email pehle se registered hai"); return; }
+        const newUser = { name, email, password };
+        await window.storage.set(`user:${email}`, JSON.stringify(newUser), false);
+        await window.storage.set("session:current", JSON.stringify(email), false);
+        setUser(newUser);
+        setCart({});
+        setOrders([]);
+        showToast(`Welcome, ${name}!`);
+        setPage("home");
+      } else {
+        if (!existing?.value) { showToast("Account nahi mila, pehle sign up karein"); return; }
+        const parsed = JSON.parse(existing.value);
+        if (parsed.password !== password) { showToast("Password galat hai"); return; }
+        await window.storage.set("session:current", JSON.stringify(email), false);
+        await loadUserData(email);
+        setUser(parsed);
+        showToast(`Welcome back, ${parsed.name}!`);
+        setPage("home");
+      }
+    } catch (e) {
+      showToast("Kuch gadbad ho gayi, dubara try karein");
+    }
+  }
 
-        .star-field {
-            background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.05) 1px, transparent 0);
-            background-size: 40px 40px;
-        }
+  async function logout() {
+    try { await window.storage.delete("session:current", false); } catch (e) {}
+    setUser(null);
+    setCart({});
+    setOrders([]);
+    setPage("home");
+  }
 
-        .watermark-text {
-            font-size: 12rem;
-            line-height: 1;
-            font-weight: 900;
-            color: rgba(255, 255, 255, 0.02);
-            pointer-events: none;
-            user-select: none;
-            z-index: 0;
-            white-space: nowrap;
-        }
-    </style>
-<script id="tailwind-config">
-        tailwind.config = {
-          darkMode: "class",
-          theme: {
-            extend: {
-              "colors": {
-                      "glass-bg": "rgba(255, 255, 255, 0.05)",
-                      "surface": "#181309",
-                      "inverse-surface": "#ece1d0",
-                      "on-primary": "#3f2e00",
-                      "primary": "#ffe4af",
-                      "tertiary-fixed-dim": "#00daf8",
-                      "tertiary-container": "#00defd",
-                      "primary-fixed": "#ffdf9e",
-                      "on-error": "#690005",
-                      "instagram-rose": "#E4405F",
-                      "on-primary-fixed": "#261a00",
-                      "tertiary-fixed": "#a5eeff",
-                      "on-background": "#ece1d0",
-                      "secondary-fixed": "#66ff8e",
-                      "inverse-on-surface": "#363024",
-                      "primary-fixed-dim": "#fabd00",
-                      "tertiary": "#b4f0ff",
-                      "on-primary-fixed-variant": "#5b4300",
-                      "void-black": "#020617",
-                      "surface-dim": "#181309",
-                      "nebula-gray": "#D1D5DB",
-                      "surface-tint": "#fabd00",
-                      "on-tertiary": "#00363f",
-                      "error-container": "#93000a",
-                      "surface-container-high": "#2f291e",
-                      "outline-variant": "#4f4632",
-                      "error": "#ffb4ab",
-                      "surface-container-highest": "#3a3428",
-                      "on-primary-container": "#6d5100",
-                      "on-tertiary-fixed-variant": "#004e5a",
-                      "secondary-fixed-dim": "#3de273",
-                      "surface-container": "#241f14",
-                      "background": "#181309",
-                      "secondary-container": "#06c85d",
-                      "inverse-primary": "#785900",
-                      "on-surface-variant": "#d4c5ab",
-                      "on-surface": "#ece1d0",
-                      "border-glow": "rgba(255, 193, 7, 0.25)",
-                      "on-tertiary-fixed": "#001f25",
-                      "on-secondary-fixed-variant": "#005322",
-                      "surface-container-lowest": "#120e05",
-                      "on-secondary": "#003915",
-                      "surface-bright": "#3f382d",
-                      "primary-container": "#ffc107",
-                      "midnight-nebula": "#050816",
-                      "surface-container-low": "#201b11",
-                      "on-secondary-container": "#004d1f",
-                      "outline": "#9c8f78",
-                      "on-error-container": "#ffdad6",
-                      "surface-variant": "#3a3428",
-                      "on-secondary-fixed": "#002109",
-                      "secondary": "#41e575",
-                      "on-tertiary-container": "#005e6c",
-                      "deep-space": "#000814"
-              },
-              "borderRadius": {
-                      "DEFAULT": "0.25rem",
-                      "lg": "0.5rem",
-                      "xl": "0.75rem",
-                      "full": "9999px"
-              },
-              "spacing": {
-                      "card-padding": "32px",
-                      "section-gap": "80px",
-                      "section-gap-mobile": "48px",
-                      "container-max": "1200px",
-                      "gutter": "24px"
-              },
-              "fontFamily": {
-                      "body-bold": ["Inter"],
-                      "headline-sm": ["Poppins"],
-                      "display-lg-mobile": ["Poppins"],
-                      "headline-md": ["Poppins"],
-                      "body-lg": ["Inter"],
-                      "label-caps": ["Inter"],
-                      "display-lg": ["Poppins"],
-                      "body-base": ["Inter"]
-              },
-              "fontSize": {
-                      "body-bold": ["16px", {"lineHeight": "1.6", "fontWeight": "600"}],
-                      "headline-sm": ["24px", {"lineHeight": "1.4", "fontWeight": "700"}],
-                      "display-lg-mobile": ["36px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "800"}],
-                      "headline-md": ["32px", {"lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "700"}],
-                      "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
-                      "label-caps": ["12px", {"lineHeight": "1", "letterSpacing": "0.1em", "fontWeight": "700"}],
-                      "display-lg": ["56px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800"}],
-                      "body-base": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}]
-              }
-            },
-          },
-        }
-    </script>
-</head>
-<body class="bg-midnight-nebula text-on-surface font-body-base overflow-x-hidden selection:bg-primary-container selection:text-on-primary-container">
-<!-- Top Navigation Bar -->
-<nav class="fixed top-0 w-full z-50 backdrop-blur-3xl bg-midnight-nebula/80 border-b border-white/10 shadow-2xl">
-<div class="flex justify-between items-center max-w-container-max mx-auto px-gutter py-4">
-<a class="font-headline-md text-headline-md text-primary-fixed-dim tracking-tight" href="#">The Pet Corner</a>
-<div class="hidden md:flex items-center space-x-8">
-<a class="text-on-surface hover:text-primary transition-colors duration-300 font-body-base text-body-base" href="#">Home</a>
-<a class="text-on-surface hover:text-primary transition-colors duration-300 font-body-base text-body-base" href="#">About Us</a>
-<a class="text-primary border-b-2 border-primary pb-1 font-body-base text-body-base" href="#">Services</a>
-<a class="text-on-surface hover:text-primary transition-colors duration-300 font-body-base text-body-base" href="#">Shop</a>
-<a class="text-on-surface hover:text-primary transition-colors duration-300 font-body-base text-body-base" href="#">Gallery</a>
-<a class="text-on-surface hover:text-primary transition-colors duration-300 font-body-base text-body-base" href="#">Blog</a>
-<a class="text-on-surface hover:text-primary transition-colors duration-300 font-body-base text-body-base" href="#">Contact</a>
-</div>
-<div class="flex items-center space-x-6">
-<button class="material-symbols-outlined text-primary hover:scale-110 transition-transform cursor-pointer">search</button>
-<button class="material-symbols-outlined text-primary hover:scale-110 transition-transform cursor-pointer">shopping_cart</button>
-<button class="material-symbols-outlined text-primary hover:scale-110 transition-transform cursor-pointer">chat</button>
-</div>
-</div>
-</nav>
-<main class="pt-32 relative">
-<!-- Background Elements -->
-<div class="absolute inset-0 star-field opacity-40 pointer-events-none"></div>
+  async function placeOrder(orderDraft) {
+    if (!user) return;
+    const order = {
+      id: "ORD" + Date.now().toString().slice(-8),
+      date: new Date().toISOString(),
+      items: Object.entries(cart).map(([id, qty]) => {
+        const p = PRODUCTS.find((x) => x.id === id);
+        return { id, name: p.name, price: p.price, qty };
+      }),
+      total: cartTotal(),
+      address: orderDraft.address,
+      payment: orderDraft.payment,
+      status: "Confirmed",
+    };
+    const nextOrders = [order, ...orders];
+    setOrders(nextOrders);
+    setCart({});
+    try {
+      await window.storage.set(`orders:${user.email}`, JSON.stringify(nextOrders), false);
+      await window.storage.set(`cart:${user.email}`, JSON.stringify({}), false);
+    } catch (e) {}
+    return order;
+  }
 
-<!-- Page Header -->
-<section class="max-w-container-max mx-auto px-gutter relative z-10 mb-section-gap">
-<span class="font-label-caps text-label-caps text-primary-fixed tracking-widest block mb-4">OUR SPECIALIZED SERVICES</span>
-<h1 class="font-display-lg text-display-lg md:text-display-lg text-primary-fixed-dim mb-6 max-w-3xl">Comprehensive Care for Your Best Friend.</h1>
-<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">From emergency veterinary medicine to luxury grooming retreats, we provide a holistic approach to pet well-being in a premium setting.</p>
-</section>
-<!-- Service Deep Dive Section: Veterinary -->
-<section class="max-w-container-max mx-auto px-gutter mb-section-gap relative z-10">
-<div class="watermark-text absolute -top-20 -left-20">VETERINARY</div>
-<div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-<div class="lg:col-span-7">
-<div class="glass-panel p-card-padding rounded-xl glow-pulse relative overflow-hidden">
-<div class="flex items-center gap-4 mb-8">
-<span class="material-symbols-outlined text-primary text-4xl p-3 bg-primary/10 rounded-full">medical_services</span>
-<h2 class="font-headline-md text-headline-md text-primary-fixed">Elite Veterinary Care</h2>
-</div>
-<p class="font-body-lg text-body-lg mb-8 text-on-surface">Our world-class facility offers a complete suite of medical services, ranging from routine wellness checks to advanced surgical procedures, led by a team of specialist doctors.</p>
-<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-<ul class="space-y-4">
-<li class="flex items-center gap-3"><span class="material-symbols-outlined text-primary text-sm">check_circle</span> 24/7 Emergency Response</li>
-<li class="flex items-center gap-3"><span class="material-symbols-outlined text-primary text-sm">check_circle</span> Digital Radiography &amp; Ultrasound</li>
-<li class="flex items-center gap-3"><span class="material-symbols-outlined text-primary text-sm">check_circle</span> Advanced Dental Surgery</li>
-</ul>
-<ul class="space-y-4">
-<li class="flex items-center gap-3"><span class="material-symbols-outlined text-primary text-sm">check_circle</span> Specialized Oncology Care</li>
-<li class="flex items-center gap-3"><span class="material-symbols-outlined text-primary text-sm">check_circle</span> Preventive Immunization</li>
-<li class="flex items-center gap-3"><span class="material-symbols-outlined text-primary text-sm">check_circle</span> Internal Medicine</li>
-</ul>
-</div>
-<div class="mt-12 flex flex-wrap gap-4">
-<button class="bg-primary-container text-on-primary-container px-8 py-3 rounded-full font-body-bold flex items-center gap-2 hover:scale-105 transition-all">
-                                Book Consultation <span class="material-symbols-outlined">arrow_forward</span>
-</button>
-<button class="bg-glass-bg border border-white/10 px-8 py-3 rounded-full font-body-bold hover:bg-white/10 transition-all">
-                                View Pricing
-                            </button>
-</div>
-</div>
-</div>
-<div class="lg:col-span-5 relative">
-<div class="floating relative">
-<div class="absolute -inset-4 bg-primary/20 blur-3xl rounded-full"></div>
-<img class="rounded-2xl relative z-10 shadow-2xl border border-white/10 w-full object-cover aspect-[4/5]" data-alt="A professional close-up of a modern, clinical veterinary environment within a luxury pet care boutique. A calm, well-behaved golden retriever is being examined by a veterinarian in stylish navy blue scrubs. The lighting is soft and warm, reflecting off polished glass and metallic surfaces. The color palette emphasizes deep golds and midnight blues, creating an atmosphere of trust, prestige, and advanced medical care." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBdbNdnb_eHp9ZDJU-6d3OtIJL6FknsFge9uJFrkMH2onBQERhs5ulaV9TPo6Ofg4bPp2SxhRqBsCr2_srZ2nEiSTr_h4W-sWOOwQDeKNOht_Dt3AsEVUO1YfjNTXJDx5jYb_Bzvb8IB4YtHJY9xzJB_vHv13ol-VZNbMf37EAQ0p1gtShS3bKk4FiBPfWwzvkIzSpBxnaiiFCx9OTb7-NW8o9s7aHsLESieSaF2x_5lk_Phli7CB0Ek6Gvxq9BKsq0aLu31DxZgRUP"/>
-</div>
-<div class="absolute -bottom-10 -right-10 glass-panel p-6 rounded-xl border-primary/30 border hidden md:block">
-<div class="flex items-center gap-2 mb-2">
-<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">star</span>
-</div>
-<p class="italic text-on-surface-variant">"The level of care here is unmatched."</p>
-</div>
-</div>
-</div>
-</section>
-<!-- Bento Grid Services Feature List -->
-<section class="max-w-container-max mx-auto px-gutter mb-section-gap relative z-10">
-<h2 class="font-headline-md text-headline-md text-primary-fixed mb-12 text-center">Beyond Basic Care</h2>
-<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-<!-- Grooming Card -->
-<div class="md:col-span-2 glass-panel p-card-padding rounded-xl relative overflow-hidden group hover:border-primary/40 transition-colors">
-<div class="watermark-text absolute -bottom-10 -right-10 opacity-[0.03]">RELAX</div>
-<div class="relative z-10 flex flex-col md:flex-row gap-8 items-center">
-<div class="md:w-1/2">
-<div class="flex items-center gap-3 mb-4">
-<span class="material-symbols-outlined text-primary text-3xl">content_cut</span>
-<h3 class="font-headline-sm text-headline-sm text-primary">Luxury Grooming</h3>
-</div>
-<p class="mb-6 text-on-surface-variant">Our spa-inspired grooming lounge features high-velocity drying, organic botanical shampoos, and certified master stylists who specialize in breed-standard cuts.</p>
-<ul class="space-y-2 mb-8">
-<li class="flex items-center gap-2"><span class="material-symbols-outlined text-secondary text-sm">done</span> Hand-stripping &amp; Scissoring</li>
-<li class="flex items-center gap-2"><span class="material-symbols-outlined text-secondary text-sm">done</span> Ozone Hydro-massage Therapy</li>
-<li class="flex items-center gap-2"><span class="material-symbols-outlined text-secondary text-sm">done</span> Pawdicures &amp; Ear Cleaning</li>
-</ul>
-<a class="text-primary font-body-bold flex items-center gap-2 group-hover:translate-x-2 transition-transform" href="#">Schedule Spa Day <span class="material-symbols-outlined">trending_flat</span></a>
-</div>
-<div class="md:w-1/2 rounded-lg overflow-hidden border border-white/5">
-<img class="w-full h-full object-cover" data-alt="A luxurious pet grooming scene featuring a fluffy white Samoyed dog receiving a relaxing bubble bath in a sleek, black marble tub. Bubbles are shimmering under golden accent lighting, and the background shows high-end grooming tools neatly arranged on a glass shelf. The overall mood is sophisticated, spa-like, and serene, utilizing a dark theme with vibrant gold highlights to emphasize luxury pet care." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAFOhbFiHM2VtIssNWIPnGMUAcan1pnQvLDeOkW6CiByjiYARIUxNYfK9Mw9EEzbcSIyCh7jKmQG2JtS2HzqFe4A8q5CDohylWjayVLofw-qwCjBbnnhVLZAY5273xUDBrhXFTJLdnwhnlQQzFOUy1FaCB0Ss7PLKdVl5C4EsgbaJSf7VT0JmSIo3lLogajYqjj-FA01KKA9mL5rRnTwRpssRo3qjkWH47AMIrJb4Ro6LrK1f7SgsOilRAbw1mmoKeSafjhiwzWRX7k"/>
-</div>
-</div>
-</div>
-<!-- Nutrition Card -->
-<div class="glass-panel p-card-padding rounded-xl relative overflow-hidden group hover:border-primary/40 transition-colors flex flex-col">
-<span class="material-symbols-outlined text-primary text-5xl mb-6">restaurant</span>
-<h3 class="font-headline-sm text-headline-sm text-primary mb-4">Precision Nutrition</h3>
-<p class="text-on-surface-variant flex-grow">Customized dietary plans based on breed, age, and metabolic profiles. We source only human-grade ingredients and specialized prescription diets.</p>
-<div class="mt-8 pt-8 border-t border-white/10">
-<span class="bg-secondary/10 text-secondary px-3 py-1 rounded text-xs font-label-caps inline-block mb-4">NEW SERVICE</span>
-<div class="flex -space-x-3">
-<div class="w-10 h-10 rounded-full border-2 border-midnight-nebula bg-gray-500 overflow-hidden">
-<img class="w-full h-full object-cover" data-alt="Macro photography of high-end organic pet food pellets made from salmon and sweet potato, arranged artistically on a dark slate surface. The textures are sharp and detailed, with a soft golden glow illuminating the ingredients from the side. The style is editorial and premium, highlighting the quality and nutritional value of the food." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDn-2EW3IsnWRK75eFEG75yS_YajvEI6VuZAMw0e7vjOYCZvDYfbOwSogUMNOH3KGXU0t7eq-yd4Gj7Qb-yan0h1XoaTmLK4bYXTb4wi20waBcv-YM7Tap5o5Oc0G1zoayAqiwvAF-GiBl5uNNoDnUJJyfgvtLIpxJiqV87b0E3mYBGSlnXrHRg0ja6DICW0jIb8f_Z9oe7hm7_32LA88Zpiy5ND3lOKSCa9IOlSSQPHjkK721a4bKXqUl5utEvw0SLTK-KMgeWaJRI"/>
-</div>
-<div class="w-10 h-10 rounded-full border-2 border-midnight-nebula flex items-center justify-center bg-primary-container text-on-primary-container text-xs font-bold">+5</div>
-</div>
-</div>
-</div>
-<!-- Accessories Bento -->
-<div class="glass-panel p-card-padding rounded-xl relative overflow-hidden group hover:border-primary/40 transition-colors">
-<h3 class="font-headline-sm text-headline-sm text-primary mb-4">Boutique Accessories</h3>
-<p class="text-on-surface-variant mb-6">Hand-crafted Italian leather collars, orthopedic memory foam beds, and designer apparel for the fashion-forward pet.</p>
-<div class="h-48 rounded-lg overflow-hidden relative">
-<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="A collection of luxury pet accessories displayed on a minimalist backlit shelf. Featured items include a gold-buckled emerald leather collar, a sleek minimalist ceramic water bowl, and a high-tech smart tracker. The lighting is focused and dramatic, typical of a high-end luxury retail store, set against a dark, textured background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAV-Emun337fNBiiadhEaioZ-qVTRxqjesSkY8L9oM-mM8YJVyel03R821AsXNlxqhMEVZpkW1gU5Ty6j25Xg7w7xWwW3fcmA4kuSTd7dGJa2_4B6gfvelZBBjf3YVm33EuQQz6gIABaMS0fXi6nRf68NmQbdyGHul7xM-WO4_cebTmOUTW_cu7FAznMtBR7w2DL9K-iXO48iQIL8q9z4PwusZu_q4AB1WRECrxdGRDdi2Z7-XAJeYp9qHuCrUzwAgoMQtZHQFqHkv9"/>
-<div class="absolute top-4 right-4 bg-primary-container text-on-primary-container font-label-caps px-2 py-1 rounded text-[10px]">PREMIUM COLLECTION</div>
-</div>
-</div>
-<!-- Pet Treatments Bento -->
-<div class="md:col-span-2 glass-panel p-card-padding rounded-xl relative overflow-hidden flex flex-col md:flex-row gap-8 items-center group hover:border-primary/40 transition-colors">
-<div class="md:w-1/3">
-<img class="rounded-xl shadow-2xl border border-white/10" data-alt="A stylized digital illustration of a pet health monitoring app interface on a glass device, showing glowing bio-metric data for a cat. Th
+  function cartCount() {
+    return Object.values(cart).reduce((a, b) => a + b, 0);
+  }
+  function cartTotal() {
+    return Object.entries(cart).reduce((sum, [id, qty]) => {
+      const p = PRODUCTS.find((x) => x.id === id);
+      return sum + (p ? p.price * qty : 0);
+    }, 0);
+  }
+
+  if (booting) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#F6F5F0]">
+        <Loader2 className="animate-spin text-[#2B3A67]" size={28} />
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-[#F6F5F0] text-[#22242A]" style={{ fontFamily: "'Manrope', system-ui, sans-serif" }}>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&display=swap');
+        .font-display { font-family: 'Fraunces', serif; }
+      `}</style>
+
+      <TopBar
+        user={user}
+        cartCount={cartCount()}
+        onHome={() => setPage("home")}
+        onCart={() => setPage("cart")}
+        onAuth={() => setPage("auth")}
+        onOrders={() => setPage("orders")}
+        onLogout={logout}
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+        onSearch={() => setPage("search")}
+      />
+
+      <main className="pb-24">
+        {page === "search" && (
+          <SearchResultsPage
+            query={searchQuery}
+            setQuery={setSearchQuery}
+            onOpenProduct={(p) => { setActiveProduct(p); setPage("product"); }}
+            onAddToCart={addToCart}
+            onBack={() => setPage("home")}
+          />
+        )}
+        {page === "home" && (
+          <HomePage
+            onSelectCategory={(c) => { setCategory(c); setPage("category"); }}
+            onOpenProduct={(p) => { setActiveProduct(p); setPage("product"); }}
+            onAddToCart={addToCart}
+          />
+        )}
+        {page === "category" && category && (
+          <CategoryPage
+            category={category}
+            onBack={() => setPage("home")}
+            onOpenProduct={(p) => { setActiveProduct(p); setPage("product"); }}
+            onAddToCart={addToCart}
+          />
+        )}
+        {page === "product" && activeProduct && (
+          <ProductPage
+            product={activeProduct}
+            onBack={() => setPage(category ? "category" : "home")}
+            onAddToCart={addToCart}
+          />
+        )}
+        {page === "auth" && (
+          <AuthPage mode={authMode} setMode={setAuthMode} onSubmit={handleAuth} />
+        )}
+        {page === "cart" && (
+          <CartPage
+            cart={cart}
+            products={PRODUCTS}
+            updateQty={updateQty}
+            total={cartTotal()}
+            onCheckout={() => (user ? setPage("checkout") : setPage("auth"))}
+            onBrowse={() => setPage("home")}
+          />
+        )}
+        {page === "checkout" && user && (
+          <CheckoutPage
+            total={cartTotal()}
+            onPlaceOrder={async (draft) => {
+              const order = await placeOrder(draft);
+              setActiveProduct(null);
+              setPage("confirmation");
+              window.__lastOrder = order;
+            }}
+            onBack={() => setPage("cart")}
+          />
+        )}
+        {page === "confirmation" && (
+          <ConfirmationPage order={orders[0]} onContinue={() => setPage("home")} onOrders={() => setPage("orders")} />
+        )}
+        {page === "orders" && (
+          <OrdersPage orders={orders} onBrowse={() => setPage("home")} />
+        )}
+        {page === "categories" && (
+          <CategoriesPage onSelectCategory={(c) => { setCategory(c); setPage("category"); }} />
+        )}
+        {page === "profile" && (
+          <ProfilePage
+            user={user}
+            onLogin={() => { setAuthMode("login"); setPage("auth"); }}
+            onOrders={() => setPage("orders")}
+            onLogout={logout}
+          />
+        )}
+        {page === "about" && <AboutPage onBack={() => setPage("home")} />}
+        {page === "terms" && <TermsPage onBack={() => setPage("home")} />}
+
+        {!["auth", "checkout", "product", "search"].includes(page) && (
+          <Footer onAbout={() => setPage("about")} onTerms={() => setPage("terms")} />
+        )}
+      </main>
+
+      {toast && (
+        <div className="fixed bottom-20 left-1/2 -translate-x-1/2 bg-[#22242A] text-white px-5 py-3 rounded-full text-sm shadow-lg z-50">
+          {toast}
+        </div>
+      )}
+
+      <FloatingContact />
+      <BottomNav page={page} onNavigate={setPage} />
+    </div>
+  );
+}
+
+/* ---------------- Floating contact buttons ---------------- */
+function FloatingContact() {
+  return (
+    <div className="fixed right-4 bottom-24 z-40 flex flex-col items-end gap-3">
+      <a
+        href="https://instagram.com/dukaan"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Instagram par message karein"
+        className="w-12 h-12 rounded-full flex items-center justify-center shadow-lg text-white transition-transform hover:scale-105"
+        style={{ background: "linear-gradient(135deg,#feda75,#d62976,#4f5bd5)" }}
+      >
+        <InstagramIcon size={20} />
+      </a>
+      <a
+        href="https://wa.me/910000000000"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="WhatsApp par message karein"
+        className="w-12 h-12 rounded-full bg-[#25D366] flex items-center justify-center shadow-lg text-white transition-transform hover:scale-105"
+      >
+        <WhatsAppIcon size={22} />
+      </a>
+    </div>
+  );
+}
+
+/* ---------------- Footer ---------------- */
+function Footer({ onAbout, onTerms }) {
+  return (
+    <footer className="max-w-5xl mx-auto px-4 mt-16 pt-8 pb-4 border-t border-[#22242A]/10">
+      <div className="flex flex-col items-center text-center gap-3">
+        <p className="font-display text-lg font-semibold text-[#2B3A67]">Dukaan</p>
+        <div className="flex items-center gap-5 text-sm text-[#22242A]/60">
+          <button onClick={onAbout} className="hover:text-[#2B3A67]">About Us</button>
+          <span className="text-[#22242A]/20">•</span>
+          <button onClick={onTerms} className="hover:text-[#2B3A67]">Terms &amp; Conditions</button>
+        </div>
+        <p className="text-xs text-[#22242A]/40 mt-2">© {new Date().getFullYear()} Dukaan. Sab kuch, ek jagah.</p>
+      </div>
+    </footer>
+  );
+}
+
+/* ---------------- About Us ---------------- */
+function AboutPage({ onBack }) {
+  return (
+    <div className="max-w-2xl mx-auto px-4 pt-6 pb-10">
+      <button onClick={onBack} className="flex items-center gap-1 text-sm text-[#22242A]/60 hover:text-[#22242A] mb-6">
+        <ArrowLeft size={15} /> Home
+      </button>
+      <h1 className="font-display text-3xl font-semibold mb-4">Hamare Baare Mein</h1>
+      <div className="space-y-4 text-[#22242A]/75 leading-relaxed text-sm">
+        <p>
+          Dukaan ek general store hai jahan aapko roz ki zaroorat se lekar khaas mauqon tak — electronics,
+          fashion, ghar ka saaman, bachchon ke khilaune, grocery aur beauty products — sab kuch ek hi jagah
+          par milta hai.
+        </p>
+        <p>
+          Hamara maqsad hai simple, bharosemand aur asaan shopping experience dena — chahe aap shehar mein ho
+          ya kasbe mein, achi quality ke products sabse behtar daam par pahunchana hamari priority hai.
+        </p>
+        <p>
+          Kisi bhi sawal ya madad ke liye hamari team WhatsApp aur Instagram par hamesha available hai —
+          niche diye gaye floating buttons se seedha humse judein.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+/* ---------------- Terms & Conditions ---------------- */
+function TermsPage({ onBack }) {
+  const sections = [
+    { title: "Orders", body: "Order place karne ke baad confirmation email/SMS bheja jata hai. Order cancel ya modify karne ke liye customer support se sampark karein delivery ke pehle." },
+    { title: "Pricing & Payment", body: "Saare prices INR mein hain aur applicable taxes shamil hain. Cash on Delivery aur Card/UPI payment options available hain." },
+    { title: "Shipping & Delivery", body: "Delivery time area ke hisaab se 3-5 working din tak ho sakta hai. Delay ki suchna order tracking se milegi." },
+    { title: "Returns & Refunds", body: "Damaged ya galat product mile toh delivery ke 7 din ke andar return/replacement ke liye request kar sakte hain." },
+    { title: "Privacy", body: "Aapki personal jaankari sirf order processing aur delivery ke liye use ki jaati hai, kisi third-party ke saath share nahi ki jaati." },
+  ];
+  return (
+    <div className="max-w-2xl mx-auto px-4 pt-6 pb-10">
+      <button onClick={onBack} className="flex items-center gap-1 text-sm text-[#22242A]/60 hover:text-[#22242A] mb-6">
+        <ArrowLeft size={15} /> Home
+      </button>
+      <h1 className="font-display text-3xl font-semibold mb-6">Terms &amp; Conditions</h1>
+      <div className="space-y-6">
+        {sections.map((s) => (
+          <div key={s.title}>
+            <h2 className="font-display text-lg font-semibold text-[#2B3A67] mb-1.5">{s.title}</h2>
+            <p className="text-[#22242A]/70 text-sm leading-relaxed">{s.body}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ---------------- Bottom navigation ---------------- */
+function BottomNav({ page, onNavigate }) {
+  const items = [
+    { id: "home", label: "Home", icon: HomeIcon },
+    { id: "categories", label: "Categories", icon: LayoutGrid },
+    { id: "orders", label: "Tracking", icon: Truck },
+    { id: "profile", label: "Profile", icon: User },
+  ];
+  const isActive = (id) => page === id || (id === "orders" && page === "confirmation");
+  return (
+    <nav className="fix
