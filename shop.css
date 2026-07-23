@@ -223,3 +223,75 @@ width:100%;
 }
 
 }
+
+/* ===========================
+PREMIUM PRODUCT CARD
+=========================== */
+
+.product-card{
+position:relative;
+overflow:hidden;
+}
+
+.discount{
+position:absolute;
+top:15px;
+left:15px;
+background:#ff3b30;
+color:#fff;
+padding:6px 12px;
+border-radius:20px;
+font-size:13px;
+font-weight:600;
+z-index:2;
+}
+
+.product-icons{
+position:absolute;
+top:15px;
+right:15px;
+display:flex;
+flex-direction:column;
+gap:10px;
+z-index:2;
+}
+
+.product-icons button{
+width:42px;
+height:42px;
+border:none;
+border-radius:50%;
+background:#fff;
+box-shadow:0 5px 15px rgba(0,0,0,.15);
+cursor:pointer;
+font-size:16px;
+transition:.3s;
+}
+
+.product-icons button:hover{
+background:#2E8B57;
+color:#fff;
+transform:scale(1.1);
+}
+
+.product-card img{
+transition:.4s;
+}
+
+.product-card:hover img{
+transform:scale(1.08);
+}
+
+.product-info h3{
+height:50px;
+overflow:hidden;
+}
+
+.add-cart{
+margin-top:15px;
+}
+
+.rating i{
+color:#FFC107;
+margin-right:5px;
+}
