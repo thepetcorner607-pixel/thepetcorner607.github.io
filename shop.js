@@ -176,3 +176,28 @@ cartIcon.innerText = cart.length;
 }
 
 updateCartCount();
+
+let wishlist=[];
+
+function addWishlist(id){
+
+const product=products.find(p=>p.id===id);
+
+wishlist.push(product);
+
+alert(product.name+" added to wishlist ❤️");
+
+}
+
+function quickView(id){
+
+const product=products.find(p=>p.id===id);
+
+alert(
+product.name+
+"\n\nPrice : ₹"+product.price+
+"\nBrand : "+product.brand+
+"\nCategory : "+product.category
+);
+
+}
