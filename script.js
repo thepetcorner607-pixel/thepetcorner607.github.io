@@ -107,3 +107,77 @@ document.querySelectorAll(".card").forEach(card=>{
 
 // Console Message
 console.log("The Pet Corner Loaded Successfully");
+
+/* ==========================
+   FEATURED PRODUCTS
+========================== */
+
+// Add to Cart
+const cartButtons = document.querySelectorAll(".cart-btn");
+
+cartButtons.forEach(button => {
+
+    button.addEventListener("click", function () {
+
+        this.innerHTML = "✅ Added";
+
+        this.style.background = "#25D366";
+
+        setTimeout(() => {
+            this.innerHTML = '<i class="fa-solid fa-cart-shopping"></i> Add to Cart';
+            this.style.background = "";
+        }, 2000);
+
+    });
+
+});
+
+// Wishlist
+const wishButtons = document.querySelectorAll(".wishlist");
+
+wishButtons.forEach(item => {
+
+    item.addEventListener("click", function () {
+
+        const icon = this.querySelector("i");
+
+        if(icon.classList.contains("fa-regular")){
+
+            icon.classList.remove("fa-regular");
+            icon.classList.add("fa-solid");
+
+            icon.style.color = "red";
+
+        }else{
+
+            icon.classList.remove("fa-solid");
+            icon.classList.add("fa-regular");
+
+            icon.style.color = "#999";
+
+        }
+
+    });
+
+});
+
+// Product Hover Animation
+const products = document.querySelectorAll(".product-card");
+
+products.forEach(product => {
+
+    product.addEventListener("mouseenter", () => {
+
+        product.style.transform = "translateY(-10px)";
+
+    });
+
+    product.addEventListener("mouseleave", () => {
+
+        product.style.transform = "translateY(0px)";
+
+    });
+
+});
+
+console.log("Featured Products Loaded Successfully");
