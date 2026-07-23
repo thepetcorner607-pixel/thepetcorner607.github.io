@@ -70,3 +70,27 @@ document.querySelector(".buy-btn")
 window.location.href="checkout.html";
 
 });
+
+// ==============================
+// PRODUCT TABS
+// ==============================
+
+function openTab(tabId){
+
+// Sabhi buttons se active hatao
+document.querySelectorAll(".tab").forEach(btn=>{
+btn.classList.remove("active");
+});
+
+// Sabhi content hide karo
+document.querySelectorAll(".tab-content").forEach(content=>{
+content.classList.remove("active");
+});
+
+// Click hua button active karo
+event.target.classList.add("active");
+
+// Selected content show karo
+document.getElementById(tabId).classList.add("active");
+
+}
