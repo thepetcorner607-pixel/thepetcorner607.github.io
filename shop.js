@@ -142,3 +142,37 @@ Add To Cart
 }
 
 displayProducts();
+// ================================
+// CART
+// ================================
+
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+function addToCart(id){
+
+const product = products.find(item => item.id === id);
+
+cart.push(product);
+
+localStorage.setItem("cart", JSON.stringify(cart));
+
+updateCartCount();
+
+alert(product.name + " added to cart");
+
+}
+
+function updateCartCount(){
+
+const cartIcon =
+document.querySelector(".cart-count");
+
+if(cartIcon){
+
+cartIcon.innerText = cart.length;
+
+}
+
+}
+
+updateCartCount();
