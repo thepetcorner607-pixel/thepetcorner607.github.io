@@ -1,0 +1,258 @@
+/* =========================
+   THE PET CORNER
+   Premium Theme
+========================= */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+:root{
+    --primary:#0F4C81;
+    --secondary:#FFD54F;
+    --accent:#25D366;
+    --white:#ffffff;
+    --dark:#1f2937;
+    --light:#f5f7fb;
+    --shadow:0 10px 30px rgba(0,0,0,.12);
+}
+
+body{
+    font-family:'Poppins',sans-serif;
+    background:var(--light);
+    color:var(--dark);
+}
+
+/* Top Bar */
+
+.top-bar{
+    background:var(--primary);
+    color:#fff;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:10px 7%;
+    font-size:14px;
+}
+
+.top-links{
+    display:flex;
+    gap:25px;
+}
+
+.top-links a{
+    color:white;
+    text-decoration:none;
+}
+
+/* Header */
+
+header{
+    position:sticky;
+    top:0;
+    z-index:999;
+    background:rgba(255,255,255,.92);
+    backdrop-filter:blur(14px);
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:18px 7%;
+    box-shadow:var(--shadow);
+}
+
+.logo{
+    display:flex;
+    align-items:center;
+    gap:15px;
+}
+
+.logo img{
+    width:60px;
+    height:60px;
+    border-radius:50%;
+}
+
+.logo h2{
+    color:var(--primary);
+}
+
+.logo p{
+    color:#666;
+    font-size:13px;
+}
+
+/* Search */
+
+.search-box{
+    width:45%;
+    display:flex;
+    overflow:hidden;
+    border-radius:50px;
+    box-shadow:var(--shadow);
+}
+
+.search-box input{
+    flex:1;
+    padding:15px;
+    border:none;
+    outline:none;
+    font-size:15px;
+}
+
+.search-box button{
+    width:70px;
+    border:none;
+    background:var(--secondary);
+    cursor:pointer;
+    font-size:18px;
+}
+
+/* Icons */
+
+.header-icons{
+    display:flex;
+    gap:20px;
+}
+
+.header-icons a{
+    color:var(--primary);
+    font-size:22px;
+    transition:.3s;
+}
+
+.header-icons a:hover{
+    color:var(--accent);
+    transform:translateY(-3px);
+}
+
+/* Navigation */
+
+nav{
+    background:white;
+    box-shadow:0 4px 10px rgba(0,0,0,.08);
+}
+
+nav ul{
+    display:flex;
+    justify-content:center;
+    list-style:none;
+}
+
+nav li{
+    margin:0 20px;
+}
+
+nav a{
+    display:block;
+    padding:18px 0;
+    text-decoration:none;
+    color:var(--dark);
+    font-weight:600;
+    transition:.3s;
+}
+
+nav a:hover{
+    color:var(--primary);
+}
+
+/* Hero */
+
+.hero{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    align-items:center;
+    padding:80px 7%;
+    background:linear-gradient(135deg,#eef7ff,#ffffff);
+}
+
+.hero h1{
+    font-size:58px;
+    color:var(--primary);
+    line-height:1.2;
+}
+
+.hero p{
+    margin:25px 0;
+    font-size:18px;
+    color:#555;
+}
+
+.hero-buttons{
+    display:flex;
+    gap:20px;
+}
+
+.shop-btn,
+.book-btn{
+    padding:15px 35px;
+    border-radius:50px;
+    text-decoration:none;
+    font-weight:700;
+    transition:.3s;
+}
+
+.shop-btn{
+    background:var(--primary);
+    color:white;
+}
+
+.book-btn{
+    background:var(--secondary);
+    color:black;
+}
+
+.shop-btn:hover,
+.book-btn:hover{
+    transform:translateY(-5px);
+}
+
+.hero-right img{
+    width:100%;
+    animation:float 4s ease-in-out infinite;
+}
+
+@keyframes float{
+    50%{
+        transform:translateY(-15px);
+    }
+}
+
+/* Categories */
+
+.categories{
+    padding:70px 7%;
+}
+
+.categories h2{
+    text-align:center;
+    font-size:38px;
+    margin-bottom:40px;
+}
+
+.category-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+    gap:25px;
+}
+
+.card{
+    background:white;
+    border-radius:20px;
+    padding:35px;
+    text-align:center;
+    box-shadow:var(--shadow);
+    transition:.35s;
+}
+
+.card i{
+    font-size:55px;
+    color:var(--primary);
+    margin-bottom:20px;
+}
+
+.card:hover{
+    transform:translateY(-10px);
+}
+``
