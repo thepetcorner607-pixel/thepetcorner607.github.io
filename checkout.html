@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Checkout | The Pet Corner</title>
+
+<link rel="preconnect"
+href="https://fonts.googleapis.com">
+
+<link rel="preconnect"
+href="https://fonts.gstatic.com"
+crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+rel="stylesheet">
+
+<link rel="stylesheet"
+href="style.css">
+
+<link rel="stylesheet"
+href="checkout.css">
+
+</head>
+
+<body>
+
+<section class="checkout-page">
+
+<h1>Checkout</h1>
+
+<div class="checkout-container">
+
+<div class="billing-details">
+
+<h2>Billing Details</h2>
+
+<form id="checkoutForm">
+
+<input
+type="text"
+placeholder="Full Name"
+required>
+
+<input
+type="email"
+placeholder="Email Address"
+required>
+
+<input
+type="tel"
+placeholder="Mobile Number"
+required>
+
+<textarea
+placeholder="Full Address"
+required>
+</textarea>
+
+<input
+type="text"
+placeholder="City"
+required>
+
+<input
+type="text"
+placeholder="State"
+required>
+
+<input
+type="text"
+placeholder="PIN Code"
+required>
+
+</form>
+
+</div>
+
+<div class="order-summary">
+
+<h2>Order Summary</h2>
+
+<div id="checkoutItems">
+
+<!-- JS se products load honge -->
+
+</div>
+
+<hr>
+
+<p>
+
+Subtotal
+
+<span id="checkoutSubtotal">
+
+₹0
+
+</span>
+
+</p>
+
+<p>
+
+Shipping
+
+<span>
+
+FREE
+
+</span>
+
+</p>
+
+<h3>
+
+Total
+
+<span id="checkoutTotal">
+
+₹0
+
+</span>
+
+</h3>
+
+<button id="placeOrder">
+
+Place Order
+
+</button>
+
+</div>
+
+</div>
+
+</section>
+
+<script src="checkout.js"></script>
+
+</body>
+</html>
