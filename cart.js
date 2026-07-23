@@ -32,3 +32,86 @@ return;
 }
 
 let grandTotal = 0;
+
+cart.forEach((product,index)=>{
+
+grandTotal += product.price;
+
+cartItems.innerHTML += `
+
+<div class="cart-item">
+
+<img src="${product.image}" alt="${product.name}">
+
+<div class="item-details">
+
+<h3>${product.name}</h3>
+
+<p class="item-price">
+₹${product.price}
+</p>
+
+<div class="quantity">
+
+<button onclick="decreaseQty(${index})">-</button>
+
+<span>1</span>
+
+<button onclick="increaseQty(${index})">+</button>
+
+</div>
+
+<button
+class="remove-btn"
+onclick="removeItem(${index})">
+
+Remove
+
+</button>
+
+</div>
+
+</div>
+
+`;
+
+});
+
+subtotal.innerHTML = "₹"+grandTotal;
+total.innerHTML = "₹"+grandTotal;
+
+}
+
+function removeItem(index){
+
+cart.splice(index,1);
+
+localStorage.setItem(
+"cart",
+JSON.stringify(cart)
+);
+
+renderCart();
+
+}
+
+function increaseQty(index){
+
+alert("Quantity feature next update me add hoga.");
+
+}
+
+function decreaseQty(index){
+
+alert("Quantity feature next update me add hoga.");
+
+}
+
+renderCart();
+
+document.querySelector(".checkout-btn")
+.addEventListener("click",()=>{
+
+window.location.href="checkout.html";
+
+});
