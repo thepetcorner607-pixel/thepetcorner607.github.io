@@ -209,11 +209,28 @@ function quickView(id){
 
 const product=products.find(p=>p.id===id);
 
-alert(
-product.name+
-"\n\nPrice : ₹"+product.price+
-"\nBrand : "+product.brand+
-"\nCategory : "+product.category
-);
+document.getElementById("quickViewModal").style.display="flex";
+
+document.getElementById("popupImage").src=product.image;
+
+document.getElementById("popupTitle").innerHTML=product.name;
+
+document.getElementById("popupBrand").innerHTML="Brand : "+product.brand;
+
+document.getElementById("popupRating").innerHTML="⭐ "+product.rating+".0";
+
+document.getElementById("popupPrice").innerHTML="₹"+product.price;
+
+document.getElementById("popupCart").onclick=function(){
+
+addToCart(product.id);
+
+}
+
+}
+
+function closeQuickView(){
+
+document.getElementById("quickViewModal").style.display="none";
 
 }
