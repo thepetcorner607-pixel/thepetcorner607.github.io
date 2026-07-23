@@ -108,7 +108,23 @@ productContainer.innerHTML+=`
 
 <div class="product-card">
 
-<img src="${product.image}">
+<span class="discount">
+-${Math.round(((product.oldPrice-product.price)/product.oldPrice)*100)}%
+</span>
+
+<div class="product-icons">
+
+<button class="wishlist" onclick="addWishlist(${product.id})">
+<i class="fa-regular fa-heart"></i>
+</button>
+
+<button class="quick-view" onclick="quickView(${product.id})">
+<i class="fa-regular fa-eye"></i>
+</button>
+
+</div>
+
+<img src="${product.image}" alt="${product.name}">
 
 <div class="product-info">
 
@@ -117,17 +133,17 @@ productContainer.innerHTML+=`
 <p>${product.brand}</p>
 
 <div class="rating">
-⭐ ${product.rating}.0
+<i class="fa-solid fa-star"></i>
+${product.rating}.0
 </div>
 
 <p class="price">
 ₹${product.price}
-<span class="old-price">
-₹${product.oldPrice}
-</span>
+<span class="old-price">₹${product.oldPrice}</span>
 </p>
 
-<button class="add-cart">
+<button class="add-cart" onclick="addToCart(${product.id})">
+<i class="fa-solid fa-cart-shopping"></i>
 Add To Cart
 </button>
 
