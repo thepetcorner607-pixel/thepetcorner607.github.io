@@ -1,455 +1,237 @@
 <!DOCTYPE html>
-import React, { useState, useEffect, useCallback } from "react";
-import {
-  ShoppingCart, Search, User, Star, Plus, Minus, X, Check,
-  Package, LogOut, ChevronRight, ChevronLeft, Smartphone, Shirt,
-  Home as HomeIcon, Gamepad2, ShoppingBasket, Sparkles, MapPin,
-  CreditCard, Truck, ArrowLeft, Loader2, LayoutGrid, Mail,
-  Instagram, MessageCircle
-} from "lucide-react";
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-/* Custom brand icons (lucide no longer ships social/brand icons) */
-function WhatsAppIcon(props) {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" {...props}>
-      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.372-.025-.521-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
-      <path d="M12.02 2C6.5 2 2 6.477 2 11.98c0 1.987.578 3.837 1.573 5.396L2.05 22l4.75-1.485a10.03 10.03 0 0 0 5.22 1.436h.005c5.52 0 10.02-4.477 10.02-9.98C22.045 6.477 17.54 2 12.02 2zm0 18.1h-.004a8.14 8.14 0 0 1-4.15-1.14l-.298-.176-3.09.965.973-3.043-.194-.312a8.1 8.1 0 0 1-1.25-4.415c0-4.492 3.65-8.144 8.017-8.144 2.14 0 4.15.836 5.665 2.353a7.95 7.95 0 0 1 2.35 5.652c0 4.492-3.653 8.26-8.02 8.26z"/>
-    </svg>
-  );
-}
-function InstagramIcon(props) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" {...props}>
-      <rect x="3" y="3" width="18" height="18" rx="5" />
-      <circle cx="12" cy="12" r="4" />
-      <circle cx="17.2" cy="6.8" r="0.9" fill="currentColor" stroke="none" />
-    </svg>
-  );
-}
+<title>The Pet Corner | Premium Pet Store & Veterinary Care</title>
 
-/* ---------------------------------------------------------
-   DUKAAN — a general mixed-goods store
-   Token system:
-   Color: base #F6F5F0 (warm paper), ink #22242A, indigo #2B3A67,
-          marigold #E8A33D, teal #3E7C6B, brick #C1512F
-   Type: Fraunces (display, characterful serif) + Manrope (UI/body)
-   Signature: category "signboards" — hand-painted bazaar shop
-              signs instead of a banner slider
---------------------------------------------------------- */
+<meta name="description" content="Premium Pet Shop for Dogs, Cats, Birds, Aquarium, Pet Food, Veterinary Consultation, Grooming and Accessories.">
 
-const CATEGORIES = [
-  { id: "electronics", name: "Electronics", icon: Smartphone, color: "#2B3A67" },
-  { id: "fashion", name: "Fashion", icon: Shirt, color: "#E8A33D" },
-  { id: "home", name: "Home & Living", icon: HomeIcon, color: "#3E7C6B" },
-  { id: "toys", name: "Toys & Kids", icon: Gamepad2, color: "#C1512F" },
-  { id: "grocery", name: "Grocery", icon: ShoppingBasket, color: "#557A46" },
-  { id: "beauty", name: "Beauty", icon: Sparkles, color: "#B0568C" },
-];
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-const PRODUCTS = [
-  { id: "p1", name: "Wireless Earbuds Pro", category: "electronics", price: 2499, mrp: 3999, rating: 4.3, desc: "40hr battery, active noise cancellation, USB-C charging case." },
-  { id: "p2", name: "Smart LED Desk Lamp", category: "electronics", price: 1199, mrp: 1799, rating: 4.1, desc: "Touch dimmer, 3 light modes, USB powered." },
-  { id: "p3", name: "10000mAh Power Bank", category: "electronics", price: 899, mrp: 1499, rating: 4.4, desc: "Dual output, fast charging, pocket-sized." },
-  { id: "p4", name: "Cotton Kurta — Men", category: "fashion", price: 799, mrp: 1299, rating: 4.0, desc: "Breathable cotton, straight fit, everyday wear." },
-  { id: "p5", name: "Handloom Saree", category: "fashion", price: 2199, mrp: 3499, rating: 4.6, desc: "Pure cotton handloom weave, festive collection." },
-  { id: "p6", name: "Canvas Sneakers", category: "fashion", price: 1099, mrp: 1799, rating: 4.2, desc: "Unisex, all-day comfort, machine washable." },
-  { id: "p7", name: "Non-Stick Cookware Set", category: "home", price: 1799, mrp: 2999, rating: 4.5, desc: "5-piece set, induction friendly, 2yr warranty." },
-  { id: "p8", name: "Cotton Bedsheet Set", category: "home", price: 899, mrp: 1499, rating: 4.3, desc: "King size, 2 pillow covers, 300 thread count." },
-  { id: "p9", name: "Bamboo Storage Rack", category: "home", price: 1399, mrp: 2199, rating: 4.1, desc: "3-tier, easy assembly, sustainable material." },
-  { id: "p10", name: "Building Blocks Set — 200pc", category: "toys", price: 649, mrp: 999, rating: 4.7, desc: "Compatible with major brands, ages 4+." },
-  { id: "p11", name: "Remote Control Car", category: "toys", price: 999, mrp: 1599, rating: 4.2, desc: "Rechargeable, all-terrain, 20 min runtime." },
-  { id: "p12", name: "Art & Craft Kit", category: "toys", price: 549, mrp: 899, rating: 4.4, desc: "50+ pieces, non-toxic, ages 5+." },
-  { id: "p13", name: "Basmati Rice — 5kg", category: "grocery", price: 549, mrp: 699, rating: 4.5, desc: "Aged, extra-long grain, aromatic." },
-  { id: "p14", name: "Cold-Pressed Mustard Oil", category: "grocery", price: 299, mrp: 399, rating: 4.3, desc: "1L, chemical-free extraction." },
-  { id: "p15", name: "Herbal Face Wash", category: "beauty", price: 249, mrp: 399, rating: 4.0, desc: "Neem & tulsi, all skin types, 100ml." },
-  { id: "p16", name: "Argan Hair Oil", category: "beauty", price: 349, mrp: 549, rating: 4.4, desc: "Nourishing blend, 200ml, sulfate-free." },
-];
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
-const money = (n) => "₹" + n.toLocaleString("en-IN");
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 
-function useToast() {
-  const [toast, setToast] = useState(null);
-  const show = useCallback((msg) => {
-    setToast(msg);
-    setTimeout(() => setToast(null), 2200);
-  }, []);
-  return [toast, show];
-}
+<link rel="stylesheet" href="style.css">
+</head>
 
-export default function App() {
-  const [page, setPage] = useState("home");
-  const [category, setCategory] = useState(null);
-  const [activeProduct, setActiveProduct] = useState(null);
-  const [user, setUser] = useState(null);
-  const [cart, setCart] = useState({});
-  const [orders, setOrders] = useState([]);
-  const [booting, setBooting] = useState(true);
-  const [toast, showToast] = useToast();
-  const [authMode, setAuthMode] = useState("login");
-  const [searchQuery, setSearchQuery] = useState("");
+<body>
 
-  // ---- boot: restore session ----
-  useEffect(() => {
-    (async () => {
-      try {
-        const session = await window.storage.get("session:current", false);
-        if (session?.value) {
-          const email = JSON.parse(session.value);
-          await loadUserData(email);
-        }
-      } catch (e) {
-        // no session yet
-      } finally {
-        setBooting(false);
-      }
-    })();
-    // eslint-disable-next-line
-  }, []);
+<!--======================
+TOP BAR
+=======================-->
 
-  async function loadUserData(email) {
-    try {
-      const u = await window.storage.get(`user:${email}`, false);
-      if (u?.value) setUser(JSON.parse(u.value));
-    } catch (e) { /* ignore */ }
-    try {
-      const c = await window.storage.get(`cart:${email}`, false);
-      if (c?.value) setCart(JSON.parse(c.value));
-    } catch (e) { setCart({}); }
-    try {
-      const o = await window.storage.get(`orders:${email}`, false);
-      if (o?.value) setOrders(JSON.parse(o.value));
-    } catch (e) { setOrders([]); }
-  }
+<div class="top-bar">
 
-  async function persistCart(email, nextCart) {
-    try { await window.storage.set(`cart:${email}`, JSON.stringify(nextCart), false); }
-    catch (e) { /* best-effort */ }
-  }
+<div class="offer">
+🚚 Free Shipping Above ₹999
+</div>
 
-  function addToCart(product, qty = 1) {
-    if (!user) { setPage("auth"); showToast("Pehle login karein"); return; }
-    setCart((prev) => {
-      const next = { ...prev, [product.id]: (prev[product.id] || 0) + qty };
-      persistCart(user.email, next);
-      return next;
-    });
-    showToast(`${product.name} cart mein add ho gaya`);
-  }
+<div class="top-links">
 
-  function updateQty(productId, delta) {
-    setCart((prev) => {
-      const nextQty = (prev[productId] || 0) + delta;
-      const next = { ...prev };
-      if (nextQty <= 0) delete next[productId];
-      else next[productId] = nextQty;
-      if (user) persistCart(user.email, next);
-      return next;
-    });
-  }
+<a href="#">
+<i class="fa-solid fa-location-dot"></i>
+Store Locator
+</a>
 
-  async function handleAuth({ mode, name, email, password }) {
-    email = email.trim().toLowerCase();
-    if (!email || !password || (mode === "signup" && !name)) {
-      showToast("Sabhi fields bharein");
-      return;
-    }
-    try {
-      const existing = await window.storage.get(`user:${email}`, false).catch(() => null);
-      if (mode === "signup") {
-        if (existing?.value) { showToast("Ye email pehle se registered hai"); return; }
-        const newUser = { name, email, password };
-        await window.storage.set(`user:${email}`, JSON.stringify(newUser), false);
-        await window.storage.set("session:current", JSON.stringify(email), false);
-        setUser(newUser);
-        setCart({});
-        setOrders([]);
-        showToast(`Welcome, ${name}!`);
-        setPage("home");
-      } else {
-        if (!existing?.value) { showToast("Account nahi mila, pehle sign up karein"); return; }
-        const parsed = JSON.parse(existing.value);
-        if (parsed.password !== password) { showToast("Password galat hai"); return; }
-        await window.storage.set("session:current", JSON.stringify(email), false);
-        await loadUserData(email);
-        setUser(parsed);
-        showToast(`Welcome back, ${parsed.name}!`);
-        setPage("home");
-      }
-    } catch (e) {
-      showToast("Kuch gadbad ho gayi, dubara try karein");
-    }
-  }
+<a href="#">
+<i class="fa-solid fa-phone"></i>
+Contact
+</a>
 
-  async function logout() {
-    try { await window.storage.delete("session:current", false); } catch (e) {}
-    setUser(null);
-    setCart({});
-    setOrders([]);
-    setPage("home");
-  }
+<a href="#">
+<i class="fa-solid fa-user"></i>
+Login
+</a>
 
-  async function placeOrder(orderDraft) {
-    if (!user) return;
-    const order = {
-      id: "ORD" + Date.now().toString().slice(-8),
-      date: new Date().toISOString(),
-      items: Object.entries(cart).map(([id, qty]) => {
-        const p = PRODUCTS.find((x) => x.id === id);
-        return { id, name: p.name, price: p.price, qty };
-      }),
-      total: cartTotal(),
-      address: orderDraft.address,
-      payment: orderDraft.payment,
-      status: "Confirmed",
-    };
-    const nextOrders = [order, ...orders];
-    setOrders(nextOrders);
-    setCart({});
-    try {
-      await window.storage.set(`orders:${user.email}`, JSON.stringify(nextOrders), false);
-      await window.storage.set(`cart:${user.email}`, JSON.stringify({}), false);
-    } catch (e) {}
-    return order;
-  }
+</div>
 
-  function cartCount() {
-    return Object.values(cart).reduce((a, b) => a + b, 0);
-  }
-  function cartTotal() {
-    return Object.entries(cart).reduce((sum, [id, qty]) => {
-      const p = PRODUCTS.find((x) => x.id === id);
-      return sum + (p ? p.price * qty : 0);
-    }, 0);
-  }
+</div>
 
-  if (booting) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-[#F6F5F0]">
-        <Loader2 className="animate-spin text-[#2B3A67]" size={28} />
-      </div>
-    );
-  }
+<!--======================
+HEADER
+=======================-->
 
-  return (
-    <div className="min-h-screen bg-[#F6F5F0] text-[#22242A]" style={{ fontFamily: "'Manrope', system-ui, sans-serif" }}>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&display=swap');
-        .font-display { font-family: 'Fraunces', serif; }
-      `}</style>
+<header>
 
-      <TopBar
-        user={user}
-        cartCount={cartCount()}
-        onHome={() => setPage("home")}
-        onCart={() => setPage("cart")}
-        onAuth={() => setPage("auth")}
-        onOrders={() => setPage("orders")}
-        onLogout={logout}
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
-        onSearch={() => setPage("search")}
-      />
+<div class="logo">
 
-      <main className="pb-24">
-        {page === "search" && (
-          <SearchResultsPage
-            query={searchQuery}
-            setQuery={setSearchQuery}
-            onOpenProduct={(p) => { setActiveProduct(p); setPage("product"); }}
-            onAddToCart={addToCart}
-            onBack={() => setPage("home")}
-          />
-        )}
-        {page === "home" && (
-          <HomePage
-            onSelectCategory={(c) => { setCategory(c); setPage("category"); }}
-            onOpenProduct={(p) => { setActiveProduct(p); setPage("product"); }}
-            onAddToCart={addToCart}
-          />
-        )}
-        {page === "category" && category && (
-          <CategoryPage
-            category={category}
-            onBack={() => setPage("home")}
-            onOpenProduct={(p) => { setActiveProduct(p); setPage("product"); }}
-            onAddToCart={addToCart}
-          />
-        )}
-        {page === "product" && activeProduct && (
-          <ProductPage
-            product={activeProduct}
-            onBack={() => setPage(category ? "category" : "home")}
-            onAddToCart={addToCart}
-          />
-        )}
-        {page === "auth" && (
-          <AuthPage mode={authMode} setMode={setAuthMode} onSubmit={handleAuth} />
-        )}
-        {page === "cart" && (
-          <CartPage
-            cart={cart}
-            products={PRODUCTS}
-            updateQty={updateQty}
-            total={cartTotal()}
-            onCheckout={() => (user ? setPage("checkout") : setPage("auth"))}
-            onBrowse={() => setPage("home")}
-          />
-        )}
-        {page === "checkout" && user && (
-          <CheckoutPage
-            total={cartTotal()}
-            onPlaceOrder={async (draft) => {
-              const order = await placeOrder(draft);
-              setActiveProduct(null);
-              setPage("confirmation");
-              window.__lastOrder = order;
-            }}
-            onBack={() => setPage("cart")}
-          />
-        )}
-        {page === "confirmation" && (
-          <ConfirmationPage order={orders[0]} onContinue={() => setPage("home")} onOrders={() => setPage("orders")} />
-        )}
-        {page === "orders" && (
-          <OrdersPage orders={orders} onBrowse={() => setPage("home")} />
-        )}
-        {page === "categories" && (
-          <CategoriesPage onSelectCategory={(c) => { setCategory(c); setPage("category"); }} />
-        )}
-        {page === "profile" && (
-          <ProfilePage
-            user={user}
-            onLogin={() => { setAuthMode("login"); setPage("auth"); }}
-            onOrders={() => setPage("orders")}
-            onLogout={logout}
-          />
-        )}
-        {page === "about" && <AboutPage onBack={() => setPage("home")} />}
-        {page === "terms" && <TermsPage onBack={() => setPage("home")} />}
+<img src="images/logo.png">
 
-        {!["auth", "checkout", "product", "search"].includes(page) && (
-          <Footer onAbout={() => setPage("about")} onTerms={() => setPage("terms")} />
-        )}
-      </main>
+<div>
 
-      {toast && (
-        <div className="fixed bottom-20 left-1/2 -translate-x-1/2 bg-[#22242A] text-white px-5 py-3 rounded-full text-sm shadow-lg z-50">
-          {toast}
-        </div>
-      )}
+<h2>The Pet Corner</h2>
 
-      <FloatingContact />
-      <BottomNav page={page} onNavigate={setPage} />
-    </div>
-  );
-}
+<p>Pets • Care • Love</p>
 
-/* ---------------- Floating contact buttons ---------------- */
-function FloatingContact() {
-  return (
-    <div className="fixed right-4 bottom-24 z-40 flex flex-col items-end gap-3">
-      <a
-        href="https://instagram.com/dukaan"
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label="Instagram par message karein"
-        className="w-12 h-12 rounded-full flex items-center justify-center shadow-lg text-white transition-transform hover:scale-105"
-        style={{ background: "linear-gradient(135deg,#feda75,#d62976,#4f5bd5)" }}
-      >
-        <InstagramIcon size={20} />
-      </a>
-      <a
-        href="https://wa.me/910000000000"
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label="WhatsApp par message karein"
-        className="w-12 h-12 rounded-full bg-[#25D366] flex items-center justify-center shadow-lg text-white transition-transform hover:scale-105"
-      >
-        <WhatsAppIcon size={22} />
-      </a>
-    </div>
-  );
-}
+</div>
 
-/* ---------------- Footer ---------------- */
-function Footer({ onAbout, onTerms }) {
-  return (
-    <footer className="max-w-5xl mx-auto px-4 mt-16 pt-8 pb-4 border-t border-[#22242A]/10">
-      <div className="flex flex-col items-center text-center gap-3">
-        <p className="font-display text-lg font-semibold text-[#2B3A67]">Dukaan</p>
-        <div className="flex items-center gap-5 text-sm text-[#22242A]/60">
-          <button onClick={onAbout} className="hover:text-[#2B3A67]">About Us</button>
-          <span className="text-[#22242A]/20">•</span>
-          <button onClick={onTerms} className="hover:text-[#2B3A67]">Terms &amp; Conditions</button>
-        </div>
-        <p className="text-xs text-[#22242A]/40 mt-2">© {new Date().getFullYear()} Dukaan. Sab kuch, ek jagah.</p>
-      </div>
-    </footer>
-  );
-}
+</div>
 
-/* ---------------- About Us ---------------- */
-function AboutPage({ onBack }) {
-  return (
-    <div className="max-w-2xl mx-auto px-4 pt-6 pb-10">
-      <button onClick={onBack} className="flex items-center gap-1 text-sm text-[#22242A]/60 hover:text-[#22242A] mb-6">
-        <ArrowLeft size={15} /> Home
-      </button>
-      <h1 className="font-display text-3xl font-semibold mb-4">Hamare Baare Mein</h1>
-      <div className="space-y-4 text-[#22242A]/75 leading-relaxed text-sm">
-        <p>
-          Dukaan ek general store hai jahan aapko roz ki zaroorat se lekar khaas mauqon tak — electronics,
-          fashion, ghar ka saaman, bachchon ke khilaune, grocery aur beauty products — sab kuch ek hi jagah
-          par milta hai.
-        </p>
-        <p>
-          Hamara maqsad hai simple, bharosemand aur asaan shopping experience dena — chahe aap shehar mein ho
-          ya kasbe mein, achi quality ke products sabse behtar daam par pahunchana hamari priority hai.
-        </p>
-        <p>
-          Kisi bhi sawal ya madad ke liye hamari team WhatsApp aur Instagram par hamesha available hai —
-          niche diye gaye floating buttons se seedha humse judein.
-        </p>
-      </div>
-    </div>
-  );
-}
+<div class="search-box">
 
-/* ---------------- Terms & Conditions ---------------- */
-function TermsPage({ onBack }) {
-  const sections = [
-    { title: "Orders", body: "Order place karne ke baad confirmation email/SMS bheja jata hai. Order cancel ya modify karne ke liye customer support se sampark karein delivery ke pehle." },
-    { title: "Pricing & Payment", body: "Saare prices INR mein hain aur applicable taxes shamil hain. Cash on Delivery aur Card/UPI payment options available hain." },
-    { title: "Shipping & Delivery", body: "Delivery time area ke hisaab se 3-5 working din tak ho sakta hai. Delay ki suchna order tracking se milegi." },
-    { title: "Returns & Refunds", body: "Damaged ya galat product mile toh delivery ke 7 din ke andar return/replacement ke liye request kar sakte hain." },
-    { title: "Privacy", body: "Aapki personal jaankari sirf order processing aur delivery ke liye use ki jaati hai, kisi third-party ke saath share nahi ki jaati." },
-  ];
-  return (
-    <div className="max-w-2xl mx-auto px-4 pt-6 pb-10">
-      <button onClick={onBack} className="flex items-center gap-1 text-sm text-[#22242A]/60 hover:text-[#22242A] mb-6">
-        <ArrowLeft size={15} /> Home
-      </button>
-      <h1 className="font-display text-3xl font-semibold mb-6">Terms &amp; Conditions</h1>
-      <div className="space-y-6">
-        {sections.map((s) => (
-          <div key={s.title}>
-            <h2 className="font-display text-lg font-semibold text-[#2B3A67] mb-1.5">{s.title}</h2>
-            <p className="text-[#22242A]/70 text-sm leading-relaxed">{s.body}</p>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
+<input
+type="text"
+placeholder="Search Products...">
 
-/* ---------------- Bottom navigation ---------------- */
-function BottomNav({ page, onNavigate }) {
-  const items = [
-    { id: "home", label: "Home", icon: HomeIcon },
-    { id: "categories", label: "Categories", icon: LayoutGrid },
-    { id: "orders", label: "Tracking", icon: Truck },
-    { id: "profile", label: "Profile", icon: User },
-  ];
-  const isActive = (id) => page === id || (id === "orders" && page === "confirmation");
-  return (
-    <nav className="fix
+<button>
+
+<i class="fa-solid fa-magnifying-glass"></i>
+
+</button>
+
+</div>
+
+<div class="header-icons">
+
+<a href="#">
+<i class="fa-regular fa-heart"></i>
+</a>
+
+<a href="#">
+<i class="fa-solid fa-cart-shopping"></i>
+</a>
+
+<a href="#">
+<i class="fa-regular fa-user"></i>
+</a>
+
+</div>
+
+</header>
+
+<!--======================
+NAVIGATION
+=======================-->
+
+<nav>
+
+<ul>
+
+<li><a href="#">Home</a></li>
+
+<li><a href="#">Dogs</a></li>
+
+<li><a href="#">Cats</a></li>
+
+<li><a href="#">Food</a></li>
+
+<li><a href="#">Accessories</a></li>
+
+<li><a href="#">Veterinary</a></li>
+
+<li><a href="#">Vaccination</a></li>
+
+<li><a href="#">Contact</a></li>
+
+</ul>
+
+</nav>
+
+<!--======================
+HERO SECTION
+=======================-->
+
+<section class="hero">
+
+<div class="hero-left">
+
+<h1>
+
+Everything Your Pet Needs
+
+</h1>
+
+<p>
+
+Premium Food, Veterinary Care,
+Accessories & Grooming
+All in One Place.
+
+</p>
+
+<div class="hero-buttons">
+
+<a href="#" class="shop-btn">
+
+Shop Now
+
+</a>
+
+<a href="#" class="book-btn">
+
+Book Vet
+
+</a>
+
+</div>
+
+</div>
+
+<div class="hero-right">
+
+<img src="images/hero1.png">
+
+</div>
+
+</section>
+
+<!-- Next Section -->
+<section class="categories">
+
+<h2>Shop by Category</h2>
+
+<div class="category-grid">
+
+<div class="card">
+
+<i class="fa-solid fa-dog"></i>
+
+<h3>Dogs</h3>
+
+</div>
+
+<div class="card">
+
+<i class="fa-solid fa-cat"></i>
+
+<h3>Cats</h3>
+
+</div>
+
+<div class="card">
+
+<i class="fa-solid fa-fish"></i>
+
+<h3>Aquarium</h3>
+
+</div>
+
+<div class="card">
+
+<i class="fa-solid fa-dove"></i>
+
+<h3>Birds</h3>
+
+</div>
+
+<div class="card">
+
+<i class="fa-solid fa-paw"></i>
+
+<h3>Accessories</h3>
+
+</div>
+
+</div>
+
+</section>
+
+<script src="script.js"></script>
+
+</body>
+</html>
